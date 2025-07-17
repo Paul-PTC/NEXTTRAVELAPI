@@ -18,8 +18,8 @@ import java.util.List;
 public class RangoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_rango")
-    @SequenceGenerator(name = "seq_rango", sequenceName = "seq_rango", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_rango_empleado")
+    @SequenceGenerator(name = "seq_rango_empleado", sequenceName = "seq_rango_empleado", allocationSize = 1)
     @Column(name = "IDRANGO")
     private Long id;
 

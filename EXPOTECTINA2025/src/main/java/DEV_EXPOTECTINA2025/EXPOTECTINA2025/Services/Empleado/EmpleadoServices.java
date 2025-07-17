@@ -79,7 +79,7 @@ public class EmpleadoServices {
         //1. Verificar existencia
         EmpleadoEntities empleadoExistente = repo.findById(dui).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Usuario no encontrado"));
         //2. Actualizar campos
-        empleadoExistente.setDuiEmpleado(empleadoDTO.getDuiEmpleado());
+        empleadoExistente.setDuiEmpleado(empleadoDTO.getDuiEmpleado()); //vemos talvez error
         //empleadoExistente.setIdUsuario(empleadoDTO.getIdUsuario());
         //empleadoExistente.setIdRango(empleadoDTO.getIdRango());
         empleadoExistente.setNombre(empleadoDTO.getNombre());
@@ -134,8 +134,8 @@ public class EmpleadoServices {
     private EmpleadoDTO convertirAEmpleadoDTO(EmpleadoEntities empleado) {
         EmpleadoDTO dto = new EmpleadoDTO();
         dto.setDuiEmpleado(empleado.getDuiEmpleado());
-        dto.setIdUsuario(empleado.getIdUsuario());
-        dto.setIdRango(empleado.getIdRango());
+        dto.setIdUsuario(empleado.getUsuario().getId());
+        dto.setIdRango(empleado.getRango().getId());
         dto.setNombre(empleado.getNombre());
         dto.setApellido(empleado.getApellido());
         dto.setTelefono(empleado.getTelefono());
@@ -151,8 +151,6 @@ public class EmpleadoServices {
     private EmpleadoEntities convertirAEmpleadoEntity(EmpleadoDTO dto) {
         EmpleadoEntities entidad = new EmpleadoEntities();
         entidad.setDuiEmpleado(dto.getDuiEmpleado());
-        entidad.setIdUsuario(dto.getIdUsuario());
-        entidad.setIdRango(dto.getIdRango());
         entidad.setNombre(dto.getNombre());
         entidad.setApellido(dto.getApellido());
         entidad.setTelefono(dto.getTelefono());
@@ -161,6 +159,19 @@ public class EmpleadoServices {
         entidad.setFotoPerfil(dto.getFotoPerfil());
         entidad.setSalario(dto.getSalario());
         entidad.setEstado(dto.getEstado());
+
+        if (dto.getIdUsuario() != null) {
+            UserEntity usuario = userRepository.findById(dto.getIdUsuario())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + dto.getIdUsuario()));
+            entidad.setUsuario(usuario);
+        }
+
+        if (dto.getIdRango() != null) {
+            RangoEntity rango = rangoRepository.findById(dto.getIdRango())
+                    .orElseThrow(() -> new IllegalArgumentException("Rango no encontrado con ID: " + dto.getIdRango()));
+            entidad.setRango(rango);
+        }
+
         return entidad;
     }
 }

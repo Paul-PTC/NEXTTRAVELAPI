@@ -18,12 +18,6 @@ public class EmpleadoEntities {
     @Column(name = "DUIEMPLEADO")
     private String duiEmpleado;
 
-    @Column(name = "IDUSUARIO", nullable = false)
-    private Long idUsuario;
-
-    @Column(name = "IDRANGO", nullable = false)
-    private Long idRango;
-
     @Column(name = "NOMBRE")
     private String nombre;
 
@@ -48,20 +42,10 @@ public class EmpleadoEntities {
     @Column(name = "ESTADO")
     private String estado;
 
-    /**
-     * Se define que el atributo usuario es de tipo UserEntity y que este campo
-     * con JoinColumn(name -> apunta hacia la llave foránea
-     * referencedColumnName -> apunta hacia la llave primaria de la tabla TBUSUARIO
-     */
     @ManyToOne
     @JoinColumn(name = "IDUSUARIO", referencedColumnName = "IDUSUARIO")
     private UserEntity usuario;
 
-    /**
-     * Se define que el atributo rango es de tipo RangoEntity y que este campo
-     * con JoinColumn(name -> apunta hacia la llave foránea
-     * referencedColumnName -> apunta hacia la llave primaria de la tabla RANGO
-     */
     @ManyToOne
     @JoinColumn(name = "IDRANGO", referencedColumnName = "IDRANGO")
     private RangoEntity rango;
