@@ -17,6 +17,8 @@ import java.time.LocalDate;
 public class HistorialGastoEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_historial_gasto")
+    @SequenceGenerator(name = "seq_historial_gasto", sequenceName = "SEQ_ID_HISTORIAL_GASTO", allocationSize = 1)
     @Column(name = "IDHISTORIALGASTO")
     private Long idHistorialGasto;
 
@@ -33,3 +35,4 @@ public class HistorialGastoEntity {
     @Column(name = "OBSERVACIONES")
     private String observaciones;
 }
+
