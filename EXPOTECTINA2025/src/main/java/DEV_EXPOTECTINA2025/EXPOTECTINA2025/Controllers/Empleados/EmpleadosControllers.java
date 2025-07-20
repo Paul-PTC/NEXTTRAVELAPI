@@ -82,26 +82,26 @@ public class EmpleadosControllers {
     }
 
     @DeleteMapping("/eliminarEmpleado/{dui}")
-    public ResponseEntity<Map<String, Object>> eliminarEmpleado(@PathVariable Long dui) {
+    public ResponseEntity<Map<String, Object>> eliminarEmpleado(@PathVariable String dui) {
         try {
             if (!servicio.EliminarUsuario(dui)){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .header("X-Mensaje de error", "Usuario no encontrado")
+                        .header("X-Mensaje de error", "empleado no encontrado")
                         .body(Map.of(
                                 "error", "Not found",  // Tipo de error
-                                "mensaje", "El usuario no ha sido encontrado",  // Mensaje descriptivo
+                                "mensaje", "El empleado no ha sido encontrado",  // Mensaje descriptivo
                                 "timestamp", Instant.now().toString()  // Marca de tiempo del error
                         ));
             }
             return ResponseEntity.ok().body(Map.of(
                     "status", "Proceso completado",  // Estado de la operación
-                    "message", "Usuario eliminado exitosamente"  // Mensaje de éxito
+                    "message", "Empleado eliminado exitosamente"  // Mensaje de éxito
             ));
         }
         catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of(
                     "status", "Error",  // Indicador de error
-                    "message", "Error al eliminar el usuario",  // Mensaje general
+                    "message", "Error al eliminar el empleados",  // Mensaje general
                     "detail", e.getMessage()  // Detalles técnicos del error (para debugging)
             ));
         }

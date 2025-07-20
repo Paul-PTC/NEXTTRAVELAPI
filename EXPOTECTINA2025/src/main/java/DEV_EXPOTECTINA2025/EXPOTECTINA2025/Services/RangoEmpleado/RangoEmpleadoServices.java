@@ -7,11 +7,14 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.EmpleadoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.RangoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RangoRopository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class RangoEmpleadoServices {
     @Autowired
     private RangoRopository rangoRepository;
@@ -57,8 +60,25 @@ public class RangoEmpleadoServices {
     // 🔧 Conversión de Entity a DTO
     private RangoDTO convertirARangoDTO(RangoEntity rango) {
         RangoDTO dto = new RangoDTO();
-        dto.setNombreRango(dto.getNombreRango());
-        dto.setNombreRango(dto.getDescripcion());
+        dto.setId(rango.getId());
+        dto.setNombreRango(rango.getNombreRango());
+        dto.setDescripcion(rango.getDescripcion());
         return dto;
+    }
+
+    public boolean EliminarEmpleadoRango(Long id){
+        try {
+            RangoEntity objRango = rangoRepository.findById(id).orElse(null);
+            if (objRango != null) {
+                rangoRepository.deleteById(id);
+                return true;
+            }
+            else {
+                System.out.println("Rango no encontrado");
+                return false;
+            }
+        }catch (EmptyResultDataAccessException e){
+            throw new EmptyResultDataAccessException("No se encontro usuario con ID: " + id + " para eliminar.", 1);
+        }
     }
 }

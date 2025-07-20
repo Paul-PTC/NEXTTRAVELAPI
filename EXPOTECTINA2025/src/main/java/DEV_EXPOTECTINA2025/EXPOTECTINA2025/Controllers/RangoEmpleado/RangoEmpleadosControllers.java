@@ -11,9 +11,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +57,9 @@ public class RangoEmpleadosControllers {
                     ));
         }
     }
-    @PutMapping('/ActRangoEmp/{id}')
+    @PutMapping("/ActualizarRangoEmp/{id}")
     public ResponseEntity<?> modificarRangoEmpleado(
-            @PathVariable String id,
+            @PathVariable Long id,
             @Valid @RequestBody RangoDTO rangoDTO,
             BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -67,7 +69,7 @@ public class RangoEmpleadosControllers {
             return ResponseEntity.badRequest().body(errores);
         }
         try{
-            RangoDTO RangoActualizado = accesoRango.actualizarRangoEmpleado(id, rangoDTO);
+            RangoDTO RangoActualizado = accesoRango.actualizarRangoEmpleado(rangoDTO.getId(), rangoDTO);
             return ResponseEntity.ok(RangoActualizado);
         }
         catch (ExceptionsUsuarioNoEncontrado e){
@@ -78,6 +80,33 @@ public class RangoEmpleadosControllers {
                     Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
             );
         }
+    }
+
+    @DeleteMapping("EliminarRangoEmp/{id}")
+    public ResponseEntity<Map<String, Object>> eliminarRangoEmp(@PathVariable Long id){
+        try {
+            if (!accesoRango.EliminarEmpleadoRango(id)){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .header("X-Mensaje de error", "Rango de empleado no encontrado")
+                        .body(Map.of(
+                                "error", "Not found",  // Tipo de error
+                                "mensaje", "El rango no ha sido encontrado",  // Mensaje descriptivo
+                                "timestamp", Instant.now().toString()  // Marca de tiempo del error
+                        ));
+            }
+            return ResponseEntity.ok().body(Map.of(
+                    "status", "Proceso completado",  // Estado de la operación
+                    "message", "Rango eliminado exitosamente"  // Mensaje de éxito
+            ));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "status", "Error",  // Indicador de error
+                    "message", "Error al eliminar el usuario",  // Mensaje general
+                    "detail", e.getMessage()  // Detalles técnicos del error (para debugging)
+            ));
+        }
+
     }
 
 }

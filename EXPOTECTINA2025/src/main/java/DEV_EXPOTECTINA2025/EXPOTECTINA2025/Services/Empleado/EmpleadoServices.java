@@ -79,7 +79,7 @@ public class EmpleadoServices {
         //1. Verificar existencia
         EmpleadoEntities empleadoExistente = repo.findById(dui).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Usuario no encontrado"));
         //2. Actualizar campos
-        empleadoExistente.setDuiEmpleado(empleadoDTO.getDuiEmpleado()); //vemos talvez error
+        //empleadoExistente.setDuiEmpleado(empleadoDTO.getDuiEmpleado()); //vemos talvez error
         //empleadoExistente.setIdUsuario(empleadoDTO.getIdUsuario());
         //empleadoExistente.setIdRango(empleadoDTO.getIdRango());
         empleadoExistente.setNombre(empleadoDTO.getNombre());
@@ -113,7 +113,7 @@ public class EmpleadoServices {
 
     }
 
-    public boolean EliminarUsuario(Long dui){
+    public boolean EliminarUsuario(String dui){
         try{
             //Se valida la existencia del usuario previamente a la eliminación
             EmpleadoEntities objUsuario = repo.findById(String.valueOf(dui)).orElse(null);

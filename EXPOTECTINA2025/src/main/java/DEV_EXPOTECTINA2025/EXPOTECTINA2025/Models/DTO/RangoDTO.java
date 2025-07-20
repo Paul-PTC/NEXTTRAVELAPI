@@ -11,7 +11,6 @@ import lombok.ToString;
 @Getter
 @Setter
 public class RangoDTO {
-    @NotBlank(message = "El id es obligatorio")
     private Long id;
 
     @NotBlank(message = "El nombre del rango es obligatorio")
