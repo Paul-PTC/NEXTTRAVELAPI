@@ -25,7 +25,9 @@ public class TipoMantenimientoController {
     private TipoMantenimientoServices servicio;
 
     @GetMapping("/TipoMantenimient0")
-    public List<TipoMantenimientoDTO>ObtenerTipoMantenimiento(){return servicio.getAllTipoMantenimiento();}
+    public List<TipoMantenimientoDTO>ObtenerTipoMantenimiento(){
+        return servicio.getAllTipoMantenimiento();
+    }
 
     //Insercion de datos
     @PostMapping("/InsertarTipoMantenimiento")

@@ -18,12 +18,12 @@ import org.hibernate.annotations.CollectionId;
 @EqualsAndHashCode
 public class TipoMantenimietoEntities {
     @Id
-    @Column( name = "idTipoMantenimiento")
+    @Column( name = "IDTIPOMANTENIMIENTO")
     private Long idTipoMantenimiento;
 
-    @Column(name= "nombreTipo")
+    @Column(name= "NOMBRETIPO")
     private String nombreTipo;
 
-    @Column(name = "descripcion")
+    @Column(name = "DESCRIPCION")
     private String descripcion;
 }
