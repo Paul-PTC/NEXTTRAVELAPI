@@ -1,10 +1,12 @@
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\Empleados\EmpleadosControllers.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\Empleados\ItinerarioEmpleadoController.java
+C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\HistorialGasto\HistorialGastoControllers.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\HorasPorViaje\HorasPorViajeController.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\LugarTuristico\LugarTuristicoControllers.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\Mantenimiento\TipoMantenimientoController.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Controllers\RangoEmpleado\RangoEmpleadosControllers.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Entities\EmpleadoEntities.java
+C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Entities\HistorialGastoEntity.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Entities\ItinerarioEmpleadoEntities.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Entities\LugarTuristicoEntity.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Entities\RangoEntity.java
@@ -17,12 +19,14 @@ C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTE
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Expotectina2025Application.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\ApiResponse\ApiResponse.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\EmpleadoDTO.java
+C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\HistorialGastoDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\ItinerarioEmpleadoDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\LugarTuristicoDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\RangoDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\TipoMantenimientoDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Models\DTO\UserDTO.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Repositories\EmpleadoRepository.java
+C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Repositories\HistorialGastoRepository.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Repositories\ItinerarioEmpleadoRepository.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Repositories\LugarTuristicoRepository.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Repositories\RangoRopository.java
@@ -31,6 +35,7 @@ C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTE
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\Empleado\EmpleadoServices.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\Empleado\ItinerarioEmpleadoServices.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\Empleado\TipoMantenimientoServices.java
+C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\HistorialGasto\HistorialGastoServices.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\LugarTuristico\LugarTuristicoServices.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\Services\RangoEmpleado\RangoEmpleadoServices.java
 C:\Users\paulc\OneDrive\Escritorio\asdf\EXPOTECTINA2025\src\main\java\DEV_EXPOTECTINA2025\EXPOTECTINA2025\ServletInitializer.java
