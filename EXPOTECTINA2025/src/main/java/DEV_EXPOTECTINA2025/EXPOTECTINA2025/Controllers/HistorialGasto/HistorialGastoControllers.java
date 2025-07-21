@@ -34,6 +34,7 @@ public class HistorialGastoControllers {
     public ResponseEntity<Map<String, Object>> registrarHistorialGasto(
             @Valid @RequestBody HistorialGastoDTO historialGastoDTO,
             HttpServletRequest request) {
+
         try {
             // Intentamos guardar los datos
             HistorialGastoDTO respuesta = ServicesHistorialServices.insertarHistorialGasto(historialGastoDTO);

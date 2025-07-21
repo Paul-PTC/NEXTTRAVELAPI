@@ -7,39 +7,43 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ITINERARIOEMPLEADO")
+@Table(name = "HorasPorViaje")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-public class ItinerarioEmpleadoEntities {
+public class HorasPorViajeEntities {
+
     @Id
-    @Column(name = "IDITINERARIO")
-    private Long idItinerario;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "horas_viaje_seq")
+    @SequenceGenerator(name = "horas_viaje_seq", sequenceName = "seq_horas_viaje", allocationSize = 1)
+    @Column(name = "IDHORASVIAJE")
+    private Long idHorasViaje;
 
     @ManyToOne
     @JoinColumn(name = "DUIEMPLEADO", referencedColumnName = "DUIEMPLEADO")
-    public EmpleadoEntities duiEmpleado;
+    private EmpleadoEntities empleado;
 
     @ManyToOne
     @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO")
-    private VehiculosEntities vehiculo;
+    private VehiculosEntities idVehiculo;
 
     @ManyToOne
     @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA")
     private RutaEntities idRuta;
 
     @Column(name = "FECHA")
-    private Date fecha;
+    private Date fechaViaje;
 
     @Column(name = "HORAINICIO")
-    private Date horaInicio;
+    private LocalDateTime horaLlegada;
 
     @Column(name = "HORAFIN")
-    private Date horaFin;
+    private LocalDateTime horaSalida;
 
-    @Column(name = "OBSERVACIONES")
-    private String Observaciones;
+    @Column(name = "DURACION")
+    private String duracion;
 }

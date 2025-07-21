@@ -39,7 +39,7 @@ public class TipoMantenimientoServices {
         return null;
     }
 
-    public TipoMantenimientoDTO actualizarTipoMantenimiento (Long idTipoMantenimiento, TipoMantenimientoDTO tipoMantenimientoDTO){
+    public TipoMantenimientoDTO actualizarTipoMantenimientos (Long idTipoMantenimiento, TipoMantenimientoDTO tipoMantenimientoDTO){
         //Verificamos existencia
         TipoMantenimietoEntities TipoManteniminetoExiste = rep.findById(Long.valueOf(idTipoMantenimiento)).orElseThrow(()-> new ExceptionsTipoMantenimientoNoEncontrado("Tipo de mantenimiento no encontrado"));
 
@@ -54,7 +54,33 @@ public class TipoMantenimientoServices {
         return convertirATipoMantenimientosDTO(TipoMantenimientoActualizar);
     }
 
-  public boolean EliminarTipoMantenimineto(Long idTipoMantenimiento){
+    public TipoMantenimientoDTO actualizarTipoMantenimiento(Long idTipoMantenimiento, TipoMantenimientoDTO tipoMantenimientoDTO) {
+        // Verificamos existencia
+        TipoMantenimietoEntities tipoMantenimientoExiste = rep.findById(idTipoMantenimiento)
+                .orElseThrow(() -> new ExceptionsTipoMantenimientoNoEncontrado("Tipo de mantenimiento no encontrado con ID: " + idTipoMantenimiento));
+
+        // Solo actualiza los campos que vienen no nulos en el DTO
+        if (tipoMantenimientoDTO.getIdTipoMantenimiento() != null) {
+            tipoMantenimientoExiste.setIdTipoMantenimiento(tipoMantenimientoDTO.getIdTipoMantenimiento());
+        }
+
+        if (tipoMantenimientoDTO.getDescripcion() != null) {
+            tipoMantenimientoExiste.setDescripcion(tipoMantenimientoDTO.getDescripcion());
+        }
+
+        if (tipoMantenimientoDTO.getNombreTipo() != null) {
+            tipoMantenimientoExiste.setNombreTipo(tipoMantenimientoDTO.getNombreTipo());
+        }
+
+        // Guardamos los cambios
+        TipoMantenimietoEntities tipoMantenimientoActualizado = rep.save(tipoMantenimientoExiste);
+
+        // Convertimos a DTO
+        return convertirATipoMantenimientosDTO(tipoMantenimientoActualizado);
+    }
+
+
+    public boolean EliminarTipoMantenimineto(Long idTipoMantenimiento){
         try {
             //Validamos la existencia del Tipo de mantenimiento
             TipoMantenimietoEntities objTipoMantenimiento = rep.findById(Long.valueOf(idTipoMantenimiento)).orElse(null);

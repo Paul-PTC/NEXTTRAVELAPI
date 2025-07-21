@@ -1,5 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class HistorialGastoDTO {
     @NotBlank(message = "El DUI del empleado es obligatorio")
     private String duiEmpleado;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha del gasto es obligatoria")
     private LocalDate fechaGasto;
 

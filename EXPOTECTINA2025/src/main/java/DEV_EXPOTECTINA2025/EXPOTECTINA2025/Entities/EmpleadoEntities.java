@@ -1,10 +1,13 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Optional;
 
 @Entity
 @Table(name = "EMPLEADO")
@@ -49,4 +52,6 @@ public class EmpleadoEntities {
     @ManyToOne
     @JoinColumn(name = "IDRANGO", referencedColumnName = "IDRANGO")
     private RangoEntity rango;
+
+
 }

@@ -71,7 +71,7 @@ public class TipoMantenimientoController {
         try {
             TipoMantenimientoDTO TipoMantenimientoDTO = new TipoMantenimientoDTO();
             TipoMantenimientoDTO TipoMantenimientoActualizado =
-                    servicio.actualizarTipoMantenimiento(idTipoMantenimiento, TipoMantenimientoDTO);
+                    servicio.actualizarTipoMantenimientos(idTipoMantenimiento, TipoMantenimientoDTO);
             return ResponseEntity.ok(TipoMantenimientoActualizado);
         }
         catch (ExceptionsTipoMantenimientoNoEncontrado e){
@@ -81,6 +81,24 @@ public class TipoMantenimientoController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(
                     Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
             );
+        }
+    }
+    @PatchMapping("/ActualizarTipoMantenimiento/{idTipoMantenimiento}")
+    public ResponseEntity<?> actualizarTipoMantenimientoParcial(
+            @PathVariable Long idTipoMantenimiento,
+            @RequestBody TipoMantenimientoDTO tipoMantenimientoDTO) {
+
+        try {
+            TipoMantenimientoDTO actualizado = servicio.actualizarTipoMantenimiento(idTipoMantenimiento, tipoMantenimientoDTO);
+            return ResponseEntity.ok(actualizado);
+
+        } catch (ExceptionsTipoMantenimientoNoEncontrado e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Tipo de mantenimiento no encontrado", "id", idTipoMantenimiento));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al actualizar el tipo de mantenimiento", "detalle", e.getMessage()));
         }
     }
     @DeleteMapping("/EliminarTipoMantenimiento/{idTipoMantenimineto}")

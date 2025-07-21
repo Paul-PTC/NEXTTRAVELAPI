@@ -78,6 +78,24 @@ public class ItinerarioEmpleadoController {
         );
     }
     }
+    @PatchMapping("/ActualizarItinerario/{idItinerario}")
+    public ResponseEntity<?> actualizarParcialItinerario(
+            @PathVariable Long idItinerario,
+            @RequestBody ItinerarioEmpleadoDTO ItiEmpDTO) {
+        try {
+            ItinerarioEmpleadoDTO actualizado = servicio.actualizarParcialItinerarioEmpleado(idItinerario, ItiEmpDTO);
+            return ResponseEntity.ok(actualizado);
+        } catch (ExceptionsItinerarioEmpleadoNoEncontrado e) {
+            return ResponseEntity.notFound().build();
+        } catch (ExcepcionDatosDuplicados e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    Map.of(
+                            "error", "Datos duplicados",
+                            "campo", e.getCampoDuplicado()
+                    )
+            );
+        }
+    }
     @DeleteMapping("/EliminarItinerario/{idItinerario}")
     public ResponseEntity<Map<String,Object>>EliminarItinerario(@PathVariable Long idItinerario){
         try {
@@ -86,7 +104,7 @@ public class ItinerarioEmpleadoController {
                         .header("X-Mensaje de error", "Itinerario no encontrado")
                         .body(Map.of(
                                 "error", "Not found",  // Tipo de error
-                                "mensaje", "El usuario no ha sido encontrado",  // Mensaje descriptivo
+                                "mensaje", "El Itinerario no ha sido encontrado",  // Mensaje descriptivo
                                 "timestamp", Instant.now().toString()  // Marca de tiempo del error
                         ));
             }
