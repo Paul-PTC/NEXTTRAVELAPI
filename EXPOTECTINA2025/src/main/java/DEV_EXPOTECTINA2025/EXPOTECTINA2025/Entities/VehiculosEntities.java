@@ -45,8 +45,8 @@ public class VehiculosEntities {
     private Date fechaVencimientoRevision;
 
     @ManyToOne
-    @JoinColumn(name = "IDEMPLEADO", nullable = false)
-    private EmpleadoEntities empleado;
+    @JoinColumn(name = "DUIEMPLEADO", nullable = false)
+    private EmpleadoEntities duiEmpleado;
 
     //  Relación con Ruta
     @ManyToOne

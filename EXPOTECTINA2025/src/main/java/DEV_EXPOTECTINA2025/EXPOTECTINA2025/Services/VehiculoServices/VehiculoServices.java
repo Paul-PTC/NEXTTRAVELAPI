@@ -65,7 +65,7 @@ public class VehiculoServices {
                 // Buscar y asignar EmpleadoEntities
                 EmpleadoEntities empleado = EmpRep.findById(String.valueOf(data.getIdEmpleado()))
                         .orElseThrow(() -> new Exception("Empleado no encontrado con ID: " + data.getIdEmpleado()));
-                nuevoVehiculo.setEmpleado(empleado);
+                nuevoVehiculo.setDuiEmpleado(empleado);
 
                 // Buscar y asignar RutaEntities
                 RutaEntities ruta = RutRepo.findById(data.getIdRuta())
@@ -119,7 +119,7 @@ public class VehiculoServices {
         // Actualizar relación con EmpleadoEntities
         EmpleadoEntities empleado = EmpRep.findById(String.valueOf(json.getIdEmpleado()))
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + json.getIdEmpleado()));
-        vehiculoExiste.setEmpleado(empleado);
+        vehiculoExiste.setDuiEmpleado(empleado);
 
         // Actualizar relación con RutaEntities
         RutaEntities ruta = RutRepo.findById(json.getIdRuta())
