@@ -45,8 +45,9 @@ public class RutaEntities {
     private String estado;
 
     @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL)
-    private List<ReservaEntities> reservas = new ArrayList<>();
+    private List<ReservaEntity> reservas = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RutasGuardadasEntity> rutasGuardadas = new ArrayList<>();
 
 }

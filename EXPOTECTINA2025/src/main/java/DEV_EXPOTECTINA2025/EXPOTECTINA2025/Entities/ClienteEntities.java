@@ -67,4 +67,7 @@ public class ClienteEntities {
     @Column(name = "fotoPerfil", length = 255)
     private String fotoPerfil;
 
+    @ManyToOne
+    @JoinColumn(name = "idUsuario", insertable = false, updatable = false)
+    private UserEntity usuario;
 }

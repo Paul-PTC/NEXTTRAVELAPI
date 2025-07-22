@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "LUGARTURISTICO")
@@ -36,4 +38,8 @@ public class LugarTuristicoEntity {
 
     @Column(name = "LONGITUD", nullable = false, precision = 10, scale = 6)
     private BigDecimal longitud;
+
+    @OneToMany(mappedBy = "lugar", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CalificacionLugarEntity> calificacionesLugar = new ArrayList<>();
+
 }

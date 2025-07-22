@@ -58,5 +58,7 @@ public class EmpleadoEntities {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     private List<ReservaEntities> reservas = new ArrayList<>();
 
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SoporteEntity> soportesAtendidos;
 
 }

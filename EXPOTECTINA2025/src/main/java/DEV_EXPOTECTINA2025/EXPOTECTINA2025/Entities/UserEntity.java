@@ -17,22 +17,27 @@ import java.util.List;
 @EqualsAndHashCode
 public class UserEntity {
     @Id
-    @Column(name = "IDUSUARIO")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_usuario")
     @SequenceGenerator(name = "seq_usuario", sequenceName = "seq_usuario", allocationSize = 1)
+    @Column(name = "IDUSUARIO")
     private Long id;
-    @Column(name = "NOMBRE")
-    private String nombre;
-    @Column(name = "APELLIDO")
-    private String apellido;
-    @Column(name = "IDGRUPOEXPO")
-    private Long idGrupoExpo;
-    @Column(name = "IDROL")
-    private Long idRol;
+
+    @Column(name = "USUARIO", unique = true)
+    private String usuario;
+
     @Column(name = "CORREO", unique = true)
     private String correo;
+
     @Column(name = "CONTRASENA")
-    private String contraseña;
-    @Column(name = "IDCARGO")
-    private Long idCargo;
+    private String contrasena;
+
+    @Column(name = "ROL")
+    private String rol;
+
+    /**
+     * Se mapea que la relación apuntará hacia el atributo usuario de EmpleadoEntities
+     * ya que se podrá tener un usuario en muchos empleados.
+     */
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<EmpleadoEntities> empleados = new ArrayList<>();
 }
