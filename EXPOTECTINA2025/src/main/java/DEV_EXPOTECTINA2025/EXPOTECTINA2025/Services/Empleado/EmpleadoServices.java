@@ -147,31 +147,4 @@ public class EmpleadoServices {
         return dto;
     }
 
-    // 🔧 Conversión de DTO a Entity
-    private EmpleadoEntities convertirAEmpleadoEntity(EmpleadoDTO dto) {
-        EmpleadoEntities entidad = new EmpleadoEntities();
-        entidad.setDuiEmpleado(dto.getDuiEmpleado());
-        entidad.setNombre(dto.getNombre());
-        entidad.setApellido(dto.getApellido());
-        entidad.setTelefono(dto.getTelefono());
-        entidad.setCorreo(dto.getCorreo());
-        entidad.setDireccion(dto.getDireccion());
-        entidad.setFotoPerfil(dto.getFotoPerfil());
-        entidad.setSalario(dto.getSalario());
-        entidad.setEstado(dto.getEstado());
-
-        if (dto.getIdUsuario() != null) {
-            UserEntity usuario = userRepository.findById(dto.getIdUsuario())
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + dto.getIdUsuario()));
-            entidad.setUsuario(usuario);
-        }
-
-        if (dto.getIdRango() != null) {
-            RangoEntity rango = rangoRepository.findById(dto.getIdRango())
-                    .orElseThrow(() -> new IllegalArgumentException("Rango no encontrado con ID: " + dto.getIdRango()));
-            entidad.setRango(rango);
-        }
-
-        return entidad;
-    }
 }

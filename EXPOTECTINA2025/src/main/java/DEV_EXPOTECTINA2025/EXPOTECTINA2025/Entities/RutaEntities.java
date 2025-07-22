@@ -7,10 +7,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "Ruta")
+@Table(name = "RUTA")
 @Getter
 @Setter
 @ToString
@@ -41,4 +43,10 @@ public class RutaEntities {
 
      @Column(name = "ESTADO")
     private String estado;
+
+    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL)
+    private List<ReservaEntities> reservas = new ArrayList<>();
+
+
+
 }
