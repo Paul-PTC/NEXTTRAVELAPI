@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,33 @@ public class FeedbackController {
             );
         }
     }
+    @DeleteMapping("/eliminarfeedback/{id}")
+    public ResponseEntity<Map<String, Object>> eliminarFeedback(@PathVariable Long id) {
+        try {
+            if (!servicio.removerFeedback(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .header("X-Mensaje-Error", "Feedback no encontrado")
+                        .body(Map.of(
+                                "error", "Not found",
+                                "mensaje", "El feedback no ha sido encontrado",
+                                "timestamp", Instant.now().toString()
+                        ));
+            }
+
+            return ResponseEntity.ok().body(Map.of(
+                    "status", "Proceso completado",
+                    "message", "Feedback eliminado exitosamente"
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "status", "Error",
+                    "message", "Error al eliminar el feedback",
+                    "detail", e.getMessage()
+            ));
+        }
+    }
+
 
 }
 

@@ -9,6 +9,7 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,6 +94,20 @@ public class FeedbackServices {
 
         // 5. Convertir a DTO
         return convertirAFeedbackDTO(feedbackActualizado);
+    }
+    public boolean removerFeedback(Long id) {
+        try {
+            FeedbackEntity feedback = repoFeedback.findById(id).orElse(null);
+            if (feedback != null) {
+                repoFeedback.deleteById(id);
+                return true;
+            } else {
+                System.out.println("Feedback no encontrado.");
+                return false;
+            }
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultDataAccessException("No se encontró feedback con ID: " + id + " para eliminar.", 1);
+        }
     }
 
 

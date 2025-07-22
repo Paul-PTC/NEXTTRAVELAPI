@@ -56,7 +56,7 @@ public class EmpleadoEntities {
     private RangoEntity rango;
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
-    private List<ReservaEntities> reservas = new ArrayList<>();
+    private List<ReservaEntity> reservas = new ArrayList<>();
 
 
 }
