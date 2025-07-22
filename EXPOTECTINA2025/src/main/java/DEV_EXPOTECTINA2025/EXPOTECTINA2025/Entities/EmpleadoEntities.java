@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -52,6 +54,9 @@ public class EmpleadoEntities {
     @ManyToOne
     @JoinColumn(name = "IDRANGO", referencedColumnName = "IDRANGO")
     private RangoEntity rango;
+
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
+    private List<ReservaEntities> reservas = new ArrayList<>();
 
 
 }
