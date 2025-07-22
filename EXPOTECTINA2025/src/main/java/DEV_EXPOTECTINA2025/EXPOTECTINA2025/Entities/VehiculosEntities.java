@@ -17,39 +17,40 @@ import java.sql.Date;
 public class VehiculosEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idVehiculo")
+    @Column(name = "IDVEHICULO")
     private Integer idVehiculo;
-    @Column(name = "placa", length = 10, nullable = false, unique = true)
+
+    @Column(name = "PLACA", length = 10, nullable = false, unique = true)
     private String placa;
 
-    @Column(name = "marca", length = 50)
+    @Column(name = "MARCA", length = 50)
     private String marca;
 
-    @Column(name = "modelo", length = 50)
+    @Column(name = "MODELO", length = 50)
     private String modelo;
 
-    @Column(name = "anio")
+    @Column(name = "ANIO")
     private Integer anio;
 
-    @Column(name = "fechaVencimientoCirculacion")
+    @Column(name = "FECHAVENCIMIENTOCIRCULACION")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimientoCirculacion;
 
-    @Column(name = "fechaVencimientoSeguro")
+    @Column(name = "FECHAVENCIMIENTOSEGURO")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimientoSeguro;
 
-    @Column(name = "fechaVencimientoRevision")
+    @Column(name = "FECHAVENCIMIENTOREVISION")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimientoRevision;
 
     @ManyToOne
-    @JoinColumn(name = "id_empleado", nullable = false)
+    @JoinColumn(name = "IDEMPLEADO", nullable = false)
     private EmpleadoEntities empleado;
 
-    // 🔹 Relación con Ruta
+    //  Relación con Ruta
     @ManyToOne
-    @JoinColumn(name = "id_ruta", nullable = false)
+    @JoinColumn(name = "IDRUTA", nullable = false)
     private RutaEntities ruta;
 
 }
