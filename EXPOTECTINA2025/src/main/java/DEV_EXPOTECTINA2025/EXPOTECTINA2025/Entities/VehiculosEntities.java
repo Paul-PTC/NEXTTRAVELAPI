@@ -43,4 +43,13 @@ public class VehiculosEntities {
     @Temporal(TemporalType.DATE)
     private Date fechaVencimientoRevision;
 
+    @ManyToOne
+    @JoinColumn(name = "id_empleado", nullable = false)
+    private EmpleadoEntities empleado;
+
+    // 🔹 Relación con Ruta
+    @ManyToOne
+    @JoinColumn(name = "id_ruta", nullable = false)
+    private RutaEntities ruta;
+
 }
