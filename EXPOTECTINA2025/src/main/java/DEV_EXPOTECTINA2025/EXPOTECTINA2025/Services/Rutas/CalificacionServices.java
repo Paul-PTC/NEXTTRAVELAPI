@@ -1,7 +1,7 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Rutas;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.CalificacionEntities;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntity;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.CalificacionDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.CalificacionRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
@@ -42,7 +42,7 @@ public class CalificacionServices {
 
         // Extraemos el ID de la entidad reserva asociada
         if (entidad.getReserva() != null) {
-            dto.setIdReserva(entidad.getReserva().getIdReserva());
+            dto.setIdReserva(Long.valueOf(entidad.getReserva().getId()));
         }
         dto.setIdCalificacion(entidad.getIdCalificacion());
         dto.setCalificacion(entidad.getCalificacion());
@@ -59,7 +59,7 @@ public class CalificacionServices {
 
         try {
             // Buscamos la reserva asociada en la base de datos
-            Optional<ReservaEntity> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
+            Optional<ReservaEntities> reservaOptional = reservaRepository.findById(Math.toIntExact(calificacionDTO.getIdReserva()));
             if (reservaOptional.isEmpty()) {
                 throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
             }
@@ -87,7 +87,7 @@ public class CalificacionServices {
                 .orElseThrow(() -> new EntityNotFoundException("No se encontró la calificación con ID: " + id));
 
         // Verificamos que la nueva reserva exista si es que se quiere cambiar
-        Optional<ReservaEntity> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
+        Optional<ReservaEntities> reservaOptional = reservaRepository.findById(Math.toIntExact(calificacionDTO.getIdReserva()));
         if (reservaOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
         }

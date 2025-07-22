@@ -31,5 +31,5 @@ public class FeedbackEntity {
     // Relación ManyToOne con Reserva
     @ManyToOne
     @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA")
-    private ReservaEntity reserva;
+    private ReservaEntities reserva;
 }

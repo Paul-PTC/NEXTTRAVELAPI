@@ -1,12 +1,10 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Rutas;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.FeedbackEntity;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntity;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsFeedbackNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.FeedbackDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.FeedbackRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;

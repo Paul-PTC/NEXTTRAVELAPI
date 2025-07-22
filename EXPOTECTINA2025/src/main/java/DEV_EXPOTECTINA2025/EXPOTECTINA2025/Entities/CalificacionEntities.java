@@ -24,7 +24,7 @@ public class CalificacionEntities {
 
     @ManyToOne
     @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA")
-    private ReservaEntity reserva;
+    private ReservaEntities reserva;
 
     @Column(name = "CALIFICACION")
     private Integer calificacion;
