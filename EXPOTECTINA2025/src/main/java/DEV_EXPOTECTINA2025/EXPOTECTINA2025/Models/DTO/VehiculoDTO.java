@@ -38,13 +38,7 @@ public class VehiculoDTO {
     @FutureOrPresent(message = "La fecha de vencimiento de la revisión debe ser hoy o una fecha futura")
     private Date fechaVencimientoRevision;
 
-    @NotNull(message = "El ID del empleado es obligatorio")
-    @Positive(message = "El ID del empleado debe ser positivo")
-    private Long idEmpleado;
 
-    @NotNull(message = "El ID de la ruta es obligatorio")
-    @Positive(message = "El ID de la ruta debe ser positivo")
-    private Long idRuta;
 }
 
 

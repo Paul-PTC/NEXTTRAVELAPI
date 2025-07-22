@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "HorasPorViaje")
+@Table(name = "HORASPORVIAJE")
 @Getter
 @Setter
 @ToString
@@ -28,7 +28,7 @@ public class HorasPorViajeEntities {
     private EmpleadoEntities empleado;
 
     @ManyToOne
-    @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO")
+    @JoinColumn(name = "idVehiculo", referencedColumnName = "idVehiculo")
     private VehiculosEntities idVehiculo;
 
     @ManyToOne

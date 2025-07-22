@@ -50,7 +50,7 @@ public class VehiculoController {
     }
     @PutMapping("/editarVehiculo/{idVehiculo}")
     public ResponseEntity<?> modificarVehiculo(
-            @PathVariable Long id,
+            @PathVariable Long idVehiculo,
             @Valid @RequestBody VehiculoDTO json,
             BindingResult bindingResult
     ){
@@ -64,7 +64,7 @@ public class VehiculoController {
         }
         try {
             //Insertar actualizar el ususario llamado al servicio
-            VehiculoDTO dto = servicio.actualizarVehiculo(id, json);
+            VehiculoDTO dto = servicio.actualizarVehiculo(idVehiculo, json);
             return ResponseEntity.ok(dto);
         }catch (ExceptionVehiculoNoEncontrado e){
             return ResponseEntity.notFound().build();

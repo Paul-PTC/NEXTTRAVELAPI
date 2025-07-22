@@ -9,15 +9,16 @@ import lombok.ToString;
 import java.sql.Date;
 
 @Entity
-@Table(name = "Vehiculo")
+@Table(name = "VEHICULO")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 public class VehiculosEntities {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IDVEHICULO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_Vehiculo")
+    @SequenceGenerator(name = "seq_Vehiculo", sequenceName = "seq_Vehiculo", allocationSize = 1)
+    @Column(name = "idVehiculo")
     private Integer idVehiculo;
 
     @Column(name = "PLACA", length = 10, nullable = false, unique = true)
@@ -43,14 +44,5 @@ public class VehiculosEntities {
     @Column(name = "FECHAVENCIMIENTOREVISION")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimientoRevision;
-
-    @ManyToOne
-    @JoinColumn(name = "DUIEMPLEADO", nullable = false)
-    private EmpleadoEntities duiEmpleado;
-
-    //  Relación con Ruta
-    @ManyToOne
-    @JoinColumn(name = "IDRUTA", nullable = false)
-    private RutaEntities ruta;
 
 }
