@@ -24,7 +24,7 @@ public class ClienteController {
         return clienteService.getAllEmpleados();
     }
 
-    @PostMapping("/clientes")
+    @PostMapping("/clientesInsertar")
     public ResponseEntity<?> crearCliente(@Valid @RequestBody ClienteDTO clienteDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errores = new HashMap<>();

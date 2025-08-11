@@ -1,6 +1,7 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Rutas;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.FeedbackEntity;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsFeedbackNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.FeedbackDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.FeedbackRepository;
@@ -38,7 +39,7 @@ public class FeedbackServices {
         dto.setFechaComentario(entidad.getFechaComentario());
 
         if (entidad.getReserva() != null) {
-            dto.setIdReserva(entidad.getReserva().getIdReserva());
+            dto.setIdReserva(entidad.getReserva().getId());
         }
 
         return dto;
@@ -63,7 +64,7 @@ public class FeedbackServices {
         entity.setComentario(dto.getComentario());
         entity.setFechaComentario(dto.getFechaComentario());
 
-        ReservaEntity reserva = repoReserva.findById(dto.getIdReserva())
+        ReservaEntities reserva = repoReserva.findById(dto.getIdReserva())
                 .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada con ID: " + dto.getIdReserva()));
         entity.setReserva(reserva);
 
@@ -80,7 +81,7 @@ public class FeedbackServices {
 
         // 3. Actualizar relación con Reserva
         if (feedbackDto.getIdReserva() != null) {
-            ReservaEntity reserva = repoReserva.findById(feedbackDto.getIdReserva())
+            ReservaEntities reserva = repoReserva.findById(feedbackDto.getIdReserva())
                     .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada con ID proporcionado"));
             feedbackExistente.setReserva(reserva);
         } else {

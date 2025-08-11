@@ -59,7 +59,7 @@ public class CalificacionServices {
 
         try {
             // Buscamos la reserva asociada en la base de datos
-            Optional<ReservaEntities> reservaOptional = reservaRepository.findById(Math.toIntExact(calificacionDTO.getIdReserva()));
+            Optional<ReservaEntities> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
             if (reservaOptional.isEmpty()) {
                 throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
             }
@@ -87,7 +87,7 @@ public class CalificacionServices {
                 .orElseThrow(() -> new EntityNotFoundException("No se encontró la calificación con ID: " + id));
 
         // Verificamos que la nueva reserva exista si es que se quiere cambiar
-        Optional<ReservaEntities> reservaOptional = reservaRepository.findById(Math.toIntExact(calificacionDTO.getIdReserva()));
+        Optional<ReservaEntities> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
         if (reservaOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
         }

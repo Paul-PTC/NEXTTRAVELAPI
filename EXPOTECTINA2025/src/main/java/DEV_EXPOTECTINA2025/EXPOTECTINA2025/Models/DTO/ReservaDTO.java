@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
@@ -20,20 +22,20 @@ public class ReservaDTO {
     private String duiEmpleado;
 
     @NotNull(message = "El ID de ruta es obligatorio")
-    private Integer idRuta;
+    private Long idRuta;
 
     @NotNull(message = "La fecha de reserva es obligatoria")
-    private Date fechaReserva;
+    private LocalDateTime  fechaReserva;
 
     @NotNull(message = "La fecha de viaje es obligatoria")
-    private Date fechaViaje;
+    private LocalDateTime fechaViaje;
 
     @NotBlank(message = "El estado es obligatorio")
     private String estado;
 
     @NotNull(message = "La cantidad de pasajeros es obligatoria")
     @Min(value = 1, message = "Debe haber al menos 1 pasajero")
-    private Integer cantidadPasajeros;
+    private Long cantidadPasajeros;
 
     private String descripcion;
 }

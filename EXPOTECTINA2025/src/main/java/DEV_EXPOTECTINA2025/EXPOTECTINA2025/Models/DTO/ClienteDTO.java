@@ -20,7 +20,7 @@ public class ClienteDTO {
     private String duiCliente;
 
     @NotNull(message = "El ID de usuario es obligatorio")
-    private Integer idUsuario;
+    private Long idUsuario;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;

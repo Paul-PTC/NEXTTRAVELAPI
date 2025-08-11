@@ -2,29 +2,31 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
-@ToString
-@EqualsAndHashCode
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class EstadoViajeDTO {
-    private Integer id;
 
-    @NotNull
-    private Integer idReserva;
+    private Long idEstadoViaje;
 
-    @NotBlank
+    @NotNull(message = "El ID de la reserva es obligatorio")
+    private Long idReserva;
+
+    @NotBlank(message = "El estado del viaje es obligatorio")
+    @Size(max = 50, message = "El estado no puede tener más de 50 caracteres")
     private String estado;
 
-    @NotNull
-    private Date fechaEstado;
+    @NotNull(message = "La fecha del estado es obligatoria")
+    private LocalDateTime fechaEstado;
 
+    @Size(max = 200, message = "La observación no puede tener más de 200 caracteres")
     private String observacion;
-
 }

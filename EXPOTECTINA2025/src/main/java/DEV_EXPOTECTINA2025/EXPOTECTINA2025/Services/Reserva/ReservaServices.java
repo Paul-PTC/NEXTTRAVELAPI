@@ -24,7 +24,7 @@ public class ReservaServices {
     }
 
     // Obtener por Id
-    public Optional<ReservaDTO> obtenerReservaPorId(Integer id) {
+    public Optional<ReservaDTO> obtenerReservaPorId(Long id) {
         return reservaRepository.findById(id)
                 .map(this::convertirAReservaDTO);
     }
@@ -37,7 +37,7 @@ public class ReservaServices {
     }
 
     // Actualizar
-    public ReservaDTO actualizarReserva(Integer id, ReservaEntities dto) {
+    public ReservaDTO actualizarReserva(Long id, ReservaEntities dto) {
         ReservaEntities entity = reservaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
 
@@ -54,7 +54,7 @@ public class ReservaServices {
     }
 
     // Eliminar
-    public void eliminarReserva(Integer id) {
+    public void eliminarReserva(Long id) {
         reservaRepository.deleteById(id);
     }
 
@@ -75,7 +75,7 @@ public class ReservaServices {
     // Convertir DTO a Entity
     private ReservaEntities convertirAReservaEntity(ReservaEntities dto) {
         ReservaEntities entity = new ReservaEntities();
-        entity.setId(Math.toIntExact(dto.getId()));
+        entity.setId(dto.getId());
         entity.setDuiEmpleado(dto.getDuiEmpleado());
         entity.setIdRuta(dto.getIdRuta());
         entity.setFechaReserva(dto.getFechaReserva());

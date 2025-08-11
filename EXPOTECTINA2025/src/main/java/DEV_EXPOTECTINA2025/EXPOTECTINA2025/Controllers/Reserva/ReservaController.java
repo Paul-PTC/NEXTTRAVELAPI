@@ -25,7 +25,7 @@ public class ReservaController {
 
         // Obtener reserva por id
         @GetMapping("/{id}")
-        public ResponseEntity<ReservaDTO> obtenerReservaPorId(@PathVariable Integer id) {
+        public ResponseEntity<ReservaDTO> obtenerReservaPorId(@PathVariable Long id) {
             return reservaServices.obtenerReservaPorId(id)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
@@ -40,7 +40,7 @@ public class ReservaController {
 
         // Actualizar reserva
         @PutMapping("/{id}")
-        public ResponseEntity<ReservaDTO> actualizarReserva(@PathVariable Integer id, @RequestBody ReservaEntities reserva) {
+        public ResponseEntity<ReservaDTO> actualizarReserva(@PathVariable Long id, @RequestBody ReservaEntities reserva) {
             try {
                 ReservaDTO reservaActualizada = reservaServices.actualizarReserva(id, reserva);
                 return ResponseEntity.ok(reservaActualizada);

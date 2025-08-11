@@ -26,7 +26,7 @@ public class ClienteEntities {
 
     @NotNull(message = "El ID de usuario es obligatorio")
     @Column(name = "idUsuario")
-    private Integer idUsuario;
+    private Long idUsuario;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", length = 50, nullable = false)

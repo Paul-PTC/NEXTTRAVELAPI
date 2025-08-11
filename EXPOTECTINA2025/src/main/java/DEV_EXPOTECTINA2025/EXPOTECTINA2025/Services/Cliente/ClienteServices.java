@@ -76,7 +76,7 @@ public class ClienteServices {
         return entity;
     }
     public ClienteDTO actualizarCliente(String dui, ClienteDTO dto) {
-        ClienteEntities cliente = repo.findById(Long.valueOf(dui))
+        ClienteEntities cliente = repo.findById((dui))
                 .orElseThrow(() -> new NoSuchElementException("No se encontró cliente con DUI: " + dui));
 
         cliente.setNombre(dto.getNombre());
@@ -95,9 +95,9 @@ public class ClienteServices {
         return convertirAClienteDTO(actualizado);
     }
     public boolean eliminarCliente(String dui) {
-        Optional<ClienteEntities> cliente =repo.findById(Long.valueOf(dui));
+        Optional<ClienteEntities> cliente =repo.findById((dui));
         if (cliente.isPresent()) {
-           repo.deleteById(Long.valueOf(dui));
+           repo.deleteById((dui));
             return true;
         }
         return false;

@@ -3,45 +3,37 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ESTADOVIAJE")
+@Table(name = "EstadoViaje")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class EstadoViajeEntities {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "idEstadoViaje")
+    private Long idEstadoViaje;
 
-    @ManyToOne
-    @JoinColumn(name = "IDRESERVA", nullable = false)
-    private ReservaEntities reserva;
-
-    @NotBlank
-    @Column(nullable = false, length = 45)
+    @Column(name = "estado", nullable = false, length = 50)
     private String estado;
 
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date fechaEstado;
+    @Column(name = "fechaEstado", nullable = false)
+    private LocalDateTime fechaEstado;
 
-    @Column(length = 45)
+    @Column(name = "observacion", length = 200)
     private String observacion;
-    // Getters y setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
 
-    public ReservaEntities getReserva() { return reserva; }
-    public void setReserva(ReservaEntities reserva) { this.reserva = reserva; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public Date getFechaEstado() { return fechaEstado; }
-    public void setFechaEstado(Date fechaEstado) { this.fechaEstado = fechaEstado; }
-
-    public String getObservacion() { return observacion; }
-    public void setObservacion(String observacion) { this.observacion = observacion; }
-
+    // Relación con Reserva (ManyToOne)
+    @ManyToOne
+    @JoinColumn(name = "idReserva", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_estadoviaje_reserva"))
+    private ReservaEntities reserva;
 }

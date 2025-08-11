@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "RESERVA")
@@ -14,33 +17,30 @@ import java.sql.Date;
 public class ReservaEntities {
     @Id
     @Column(name = "idreserva")
-    private Integer id;
+    private Long id;
 
     @Column(name = "DUIEMPLEADO", nullable = false, length = 10)
     private String duiEmpleado;
 
     @Column(name = "IDRUTA", nullable = false)
-    private Integer idRuta;
+    private Long idRuta;
 
     @Column(name = "FECHARESERVA", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date fechaReserva;
+    private LocalDateTime  fechaReserva;
 
     @Column(name = "FECHAVIAJE", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date fechaViaje;
+    private LocalDateTime fechaViaje;
 
     @Column(name = "ESTADO", nullable = false, length = 20)
     private String estado;
 
     @Column(name = "CANTIDADPASAJEROS", nullable = false)
-    private Integer cantidadPasajeros;
+    private Long cantidadPasajeros;
 
     @Column(name = "DESCRIPCION", length = 200)
     private String descripcion;
 
-    public @NotNull(message = "El ID de la reserva es obligatorio") Integer getIdReserva() {
-        return id;
-    }
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EstadoViajeEntities> estadosViaje = new ArrayList<>();
 
 }

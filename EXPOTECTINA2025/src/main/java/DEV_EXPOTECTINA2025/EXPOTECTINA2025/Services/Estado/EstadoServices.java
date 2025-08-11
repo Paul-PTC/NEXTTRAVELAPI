@@ -17,7 +17,7 @@ public class EstadoServices {
     // Convertir Entity a DTO
     private EstadoDTO convertirAEstadoDTO(EstadoEntities entity) {
         EstadoDTO dto = new EstadoDTO();
-        dto.setId(entity.getId());
+        dto.setIdEstado(entity.getIdEstado());
         dto.setNombreEstado(entity.getNombreEstado());
         return dto;
     }
@@ -25,7 +25,7 @@ public class EstadoServices {
     // Convertir DTO a Entity
     private EstadoEntities convertirAEstadoEntities(EstadoDTO dto) {
         EstadoEntities entity = new EstadoEntities();
-        entity.setId(dto.getId());
+        entity.setIdEstado(dto.getIdEstado());
         entity.setNombreEstado(dto.getNombreEstado());
         return entity;
     }
