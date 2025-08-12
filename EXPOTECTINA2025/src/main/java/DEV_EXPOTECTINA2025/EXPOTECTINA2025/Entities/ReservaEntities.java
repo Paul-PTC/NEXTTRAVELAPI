@@ -12,21 +12,22 @@ import java.util.List;
 
 @Entity
 @Table(name = "RESERVA")
-@Getter
-@Setter
+@Getter @Setter
 public class ReservaEntities {
     @Id
-    @Column(name = "idreserva")
+    @Column(name = "IDRESERVA")
     private Long id;
 
-    @Column(name = "DUIEMPLEADO", nullable = false, length = 10)
-    private String duiEmpleado;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "DUIEMPLEADO", referencedColumnName = "DUIEMPLEADO", nullable = false)
+    private EmpleadoEntities empleado;   // ← AQUÍ está la relación correcta
 
-    @Column(name = "IDRUTA", nullable = false)
-    private Long idRuta;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA", nullable = false)
+    private RutaEntities ruta; // o deja Long idRuta si prefieres scalar
 
     @Column(name = "FECHARESERVA", nullable = false)
-    private LocalDateTime  fechaReserva;
+    private LocalDateTime fechaReserva;
 
     @Column(name = "FECHAVIAJE", nullable = false)
     private LocalDateTime fechaViaje;
@@ -42,5 +43,5 @@ public class ReservaEntities {
 
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadoViajeEntities> estadosViaje = new ArrayList<>();
-
 }
+
