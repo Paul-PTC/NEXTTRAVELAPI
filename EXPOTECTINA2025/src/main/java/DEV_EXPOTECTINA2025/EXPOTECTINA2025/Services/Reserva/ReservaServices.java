@@ -2,7 +2,10 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Reserva;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ReservaDTO;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RutaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,10 @@ import java.util.stream.Collectors;
 public class ReservaServices {
     @Autowired
     private ReservaRepository reservaRepository;
+    @Autowired
+    private EmpleadoRepository EmpleadoRepository;
+    @Autowired
+    private RutaRepository RutaRepository;
 
     // Listar todos (devuelve DTOs)
     public List<ReservaDTO> obtenerTodasLasReservas() {
@@ -41,8 +48,12 @@ public class ReservaServices {
         ReservaEntities entity = reservaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
 
-        entity.setDuiEmpleado(dto.getDuiEmpleado());
-        entity.setIdRuta(dto.getIdRuta());
+        entity.setEmpleado(EmpleadoRepository.findById(dto.getEmpleado().getDuiEmpleado())
+                .orElseThrow(() -> new EntityNotFoundException("No existe empleado con DUI: " + dto.getEmpleado().getDuiEmpleado())));
+
+        entity.setRuta(RutaRepository.findById(dto.getRuta().getIdRuta())
+                .orElseThrow(() -> new EntityNotFoundException("No existe ruta con ID: " + dto.getRuta().getIdRuta())));
+
         entity.setFechaReserva(dto.getFechaReserva());
         entity.setFechaViaje(dto.getFechaViaje());
         entity.setEstado(dto.getEstado());
@@ -62,8 +73,8 @@ public class ReservaServices {
     private ReservaDTO convertirAReservaDTO(ReservaEntities entity) {
         ReservaDTO dto = new ReservaDTO();
         dto.setId(Long.valueOf(entity.getId()));
-        dto.setDuiEmpleado(entity.getDuiEmpleado());
-        dto.setIdRuta(entity.getIdRuta());
+        dto.setDuiEmpleado(entity.getEmpleado().getDuiEmpleado());
+        dto.setIdRuta(entity.getRuta().getIdRuta());
         dto.setFechaReserva(entity.getFechaReserva());
         dto.setFechaViaje(entity.getFechaViaje());
         dto.setEstado(entity.getEstado());
@@ -76,8 +87,11 @@ public class ReservaServices {
     private ReservaEntities convertirAReservaEntity(ReservaEntities dto) {
         ReservaEntities entity = new ReservaEntities();
         entity.setId(dto.getId());
-        entity.setDuiEmpleado(dto.getDuiEmpleado());
-        entity.setIdRuta(dto.getIdRuta());
+        entity.setEmpleado(EmpleadoRepository.findById(dto.getEmpleado().getDuiEmpleado())
+                .orElseThrow(() -> new EntityNotFoundException("No existe empleado con DUI: " + dto.getEmpleado().getDuiEmpleado())));
+
+        entity.setRuta(RutaRepository.findById(dto.getRuta().getIdRuta())
+                .orElseThrow(() -> new EntityNotFoundException("No existe ruta con ID: " + dto.getRuta().getIdRuta())));
         entity.setFechaReserva(dto.getFechaReserva());
         entity.setFechaViaje(dto.getFechaViaje());
         entity.setEstado(dto.getEstado());
