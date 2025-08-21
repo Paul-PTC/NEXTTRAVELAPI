@@ -16,6 +16,7 @@ import java.util.List;
 public class ReservaEntities {
     @Id
     @Column(name = "IDRESERVA")
+
     private Long id;
 
     @ManyToOne(optional = false)
@@ -43,5 +44,8 @@ public class ReservaEntities {
 
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadoViajeEntities> estadosViaje = new ArrayList<>();
+
+    @OneToMany(mappedBy = "idreserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EntitesPago> reserva = new ArrayList<>();
 }
 

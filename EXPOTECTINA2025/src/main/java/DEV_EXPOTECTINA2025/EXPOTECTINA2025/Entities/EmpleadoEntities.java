@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.action.internal.OrphanRemovalAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class EmpleadoEntities {
 
     @Id
-    @Column(name = "DUIEMPLEADO")
+    @Column(name = "DUIEMPLEADO", unique = true)
     private String duiEmpleado;
 
     @Column(name = "NOMBRE")
@@ -60,5 +61,8 @@ public class EmpleadoEntities {
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SoporteEntity> soportesAtendidos;
+
+    @OneToMany(mappedBy = "duiEmpleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EntitesUbicacionEmpleado> ubicacionEmpleados = new ArrayList<>();
 
 }

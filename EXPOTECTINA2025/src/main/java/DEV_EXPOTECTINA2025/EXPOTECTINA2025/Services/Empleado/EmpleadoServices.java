@@ -1,6 +1,7 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Empleado;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EmpleadoEntities;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EntitesUbicacionEmpleado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.RangoEntity;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.UserEntity;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsUsuarioNoEncontrado;
