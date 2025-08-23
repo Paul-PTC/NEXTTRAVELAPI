@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@GastoEntity
 @Table(name = "RANGOEMPLEADO") // Corregido según tu tabla real
 @Getter
 @Setter

@@ -1,14 +1,11 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
-@Entity
+@GastoEntity
 @Table(name = "EstadoViaje")
 @Getter
 @Setter

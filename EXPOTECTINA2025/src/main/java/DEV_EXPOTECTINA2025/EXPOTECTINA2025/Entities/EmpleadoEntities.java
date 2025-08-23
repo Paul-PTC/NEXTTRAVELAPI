@@ -1,7 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +9,8 @@ import org.hibernate.action.internal.OrphanRemovalAction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Entity
+@GastoEntity
 @Table(name = "EMPLEADO")
 @Getter
 @Setter

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity

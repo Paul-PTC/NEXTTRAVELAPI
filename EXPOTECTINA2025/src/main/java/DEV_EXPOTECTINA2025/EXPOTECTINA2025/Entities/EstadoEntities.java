@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Entity
+@GastoEntity
 @Table(name = "ESTADO", uniqueConstraints = {
         @UniqueConstraint(name = "uq_estado_nombre", columnNames = "NOMBREESTADO")
 })

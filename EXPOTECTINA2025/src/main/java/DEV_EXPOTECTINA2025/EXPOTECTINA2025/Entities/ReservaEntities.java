@@ -1,16 +1,14 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@GastoEntity
 @Table(name = "RESERVA")
 @Getter @Setter
 public class ReservaEntities {

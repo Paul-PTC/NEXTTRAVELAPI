@@ -8,7 +8,7 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@Entity
+@GastoEntity
 @Table(name = "CALIFICACION")
 @Getter
 @Setter

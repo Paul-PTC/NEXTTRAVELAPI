@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
-@Entity
+@GastoEntity
 @Table(name = "HORASPORVIAJE")
 @Getter
 @Setter

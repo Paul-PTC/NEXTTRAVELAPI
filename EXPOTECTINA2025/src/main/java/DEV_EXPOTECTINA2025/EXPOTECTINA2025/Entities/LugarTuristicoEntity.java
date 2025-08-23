@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@GastoEntity
 @Table(name = "LUGARTURISTICO")
 @Getter
 @Setter

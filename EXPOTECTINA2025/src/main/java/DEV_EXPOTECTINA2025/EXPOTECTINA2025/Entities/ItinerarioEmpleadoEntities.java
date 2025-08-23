@@ -8,7 +8,7 @@ import lombok.ToString;
 
 import java.sql.Date;
 
-@Entity
+@GastoEntity
 @Table(name = "ITINERARIOEMPLEADO")
 @Getter
 @Setter
