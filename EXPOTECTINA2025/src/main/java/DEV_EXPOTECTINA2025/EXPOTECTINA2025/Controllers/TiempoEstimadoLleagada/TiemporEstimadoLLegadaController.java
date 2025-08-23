@@ -1,10 +1,11 @@
-package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.Promocion;
+package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.TiempoEstimadoLleagada;
+
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExcepcionDatosDuplicados;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmpleadoNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPago;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPromocion;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Promocion.PromocionServices;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TiempoLlegadaDTO;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.TiempoEstiamdoLlegada.TiempoLlegadaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,33 +20,33 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/Promocion")
-public class PromocionController {
+@RequestMapping("/api/tiempoEstimado")
+public class TiemporEstimadoLLegadaController {
+
     @Autowired
-    private PromocionServices servicesPromo;
+    private TiempoLlegadaService services;
+
+    @GetMapping("/ObtenerTiempo")
+    public List<TiempoLlegadaDTO> ObtenerTiempoLlegada(){return services.getAllTiempos();}
 
 
-    @GetMapping("/ObtenerPromociones")
-    public List<DTOPromocion> ObtenerPromocion(){return servicesPromo.getAllPromocion();}
-
-
-    @PostMapping("/InsertarPromocion")
-    public ResponseEntity<Map<String, Object>> RegistrarPromocion(@Valid @RequestBody DTOPromocion promo, HttpServletRequest request){
-        try{
+    @PostMapping("/InsertarTiempos")
+    public ResponseEntity<Map<String, Object>> RegistrarTiempoLlegada(@Valid @RequestBody TiempoLlegadaDTO tiempo, HttpServletRequest request) {
+        try {
             //Guardar ItinerarioEmpleados
-            DTOPromocion res = servicesPromo.InsertarPromocion(promo);
-            if (res == null){
+            TiempoLlegadaDTO res = services.InsertarTiempoLlegada(tiempo);
+            if (res == null) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", "Insercion Incorrecta",
                         "errrorType", "VALIDATION_ERROR",
-                        "message","Datos de Itinerario invalidos"
+                        "message", "Datos de Itinerario invalidos"
                 ));
-            }return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "status","sucess",
-                    "data",res
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "status", "sucess",
+                    "data", res
             ));
-        }
-        catch (Exception e){
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "status", "error",
@@ -55,10 +56,12 @@ public class PromocionController {
         }
     }
 
-    @PutMapping("/ActualizarPromocion/{idpromo}")
-    public ResponseEntity<?> ActualizarPromocion(
-            @PathVariable Long idpromo,
-            @Valid @RequestBody DTOPromocion promocion,
+
+
+    @PutMapping("/ActualizarTiempo/{idtiempo}")
+    public ResponseEntity<?> ActualizarTiemposLLegada(
+            @PathVariable Long idtiempo,
+            @Valid @RequestBody TiempoLlegadaDTO dtoTiempo,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, Long> errores = new HashMap<>();
@@ -67,7 +70,7 @@ public class PromocionController {
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            DTOPromocion Actualizar = servicesPromo.ActualizarPromocion(idpromo, promocion);
+            TiempoLlegadaDTO Actualizar = services.ActualizarTiempoLLegada(idtiempo, dtoTiempo);
             return ResponseEntity.ok(Actualizar);
         } catch (ExceptionsItinerarioEmpleadoNoEncontrado e) {
             return ResponseEntity.notFound().build();
@@ -78,10 +81,11 @@ public class PromocionController {
         }
     }
 
-    @DeleteMapping("/EliminarPromocion/{id}")
-    public ResponseEntity<Map<String,Object>>EliminarPromocion(@PathVariable Long id){
+
+    @DeleteMapping("/EliminarTiempoLlegada/{idtiempo}")
+    public ResponseEntity<Map<String,Object>>ElimianrTiempoLlegada(@PathVariable Long idtiempo){
         try {
-            if (!servicesPromo.eliminarPromocion(id)){
+            if (!services.EliminarTiempoLlegada(idtiempo)){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .header("X-Mensaje de error", "Itinerario no encontrado")
                         .body(Map.of(
@@ -103,6 +107,5 @@ public class PromocionController {
             ));
         }
     }
-
 
 }

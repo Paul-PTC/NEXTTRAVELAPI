@@ -21,7 +21,7 @@ public class ServiceUbicacionEmpleado {
     @Autowired
     private RepositoryUbicacionEmpleado repo;
 
-    public List<DTOUbicacionempleado> GetAllUbicacions() {
+    public List<DTOUbicacionempleado>   GetAllUbicacions() {
         List<EntitesUbicacionEmpleado> ubicacionEmpleados = repo.findAll();
         return ubicacionEmpleados.stream()
                 .map(this::ConvertirADTO)
@@ -54,7 +54,7 @@ public class ServiceUbicacionEmpleado {
     }
 
     public DTOUbicacionempleado actualizarEmpleadoUbicaacion(Long id, DTOUbicacionempleado ubicacion){
-        EntitesUbicacionEmpleado entites = repo.findById(id).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Usuario no encontrado"));
+        EntitesUbicacionEmpleado entites = repo.findById(id).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Ubicacion no encontrado"));
         //El DUI solo podria actualizarlo desde el Empleado de lo demas no podra
         //entites.setDuiEmpleado(ubicacion.getDuiEmpleado());
         entites.setUbicacionEmpleado(ubicacion.getUbicacionEmpleado());

@@ -9,6 +9,7 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.PromocionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,15 @@ public class PromocionServices {
 
     private DTOPromocion convertirAPromocionEmpleadoDTO(PromocionEntities promo) {
         DTOPromocion dto = new DTOPromocion();
+        promo.setIdPromocion(dto.getIdPromocion());
+        dto.setNombre(promo.getNombre());
+        dto.setDescripcion(promo.getDescripcion());
+        dto.setPorcentaje(Float.parseFloat(promo.getDescripcion()));
+        dto.setFechainicio((Date) promo.getFechainicio());
+        dto.setFechafin((Date) promo.getFechafin());
+        dto.setPuntosRequeridos(promo.getPuntosRequeridos());
+        dto.setEstado(promo.getEstado());
+
         return dto;
     }
 
@@ -47,21 +57,25 @@ public class PromocionServices {
     }
 
 
-    public DTOPromocion ActualizarPromocion(Long idpromo, DTOPromocion dto)
-            throws ExceptionsItinerarioEmpleadoNoEncontrado {
+    public DTOPromocion ActualizarPromocion(Long idpromo, DTOPromocion dto){
+        try{
 
-        PromocionEntities entit = repo.findById(idpromo).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Itinerario no encontrado con ID: " + idpromo));
-        entit.setNombre(dto.getNombre());
-        entit.setDescripcion(dto.getDescripcion());
-        entit.setPorcentaje(dto.getPorcentaje());
-        entit.setFechainicio(dto.getFechainicio());
-        entit.setFechafin(dto.getFechafin());
-        entit.setPuntosRequeridos(dto.getPuntosRequeridos());
-        entit.setEstado(dto.getEstado());
+            PromocionEntities entit = repo.findById(idpromo).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Promocion no encontrado con ID: " + idpromo));
+            entit.setNombre(dto.getNombre());
+            entit.setDescripcion(dto.getDescripcion());
+            entit.setPorcentaje(dto.getPorcentaje());
+            entit.setFechainicio(dto.getFechainicio());
+            entit.setFechafin(dto.getFechafin());
+            entit.setPuntosRequeridos(dto.getPuntosRequeridos());
+            entit.setEstado(dto.getEstado());
 
-        PromocionEntities pago = repo.save(entit);
-        return convertirAPromocionEmpleadoDTO(pago);
+            PromocionEntities pago = repo.save(entit);
+            return convertirAPromocionEmpleadoDTO(pago);
+        }catch (Exception e) {
+            return null;
+        }
     }
+
 
 
     public boolean eliminarPromocion(Long id) {

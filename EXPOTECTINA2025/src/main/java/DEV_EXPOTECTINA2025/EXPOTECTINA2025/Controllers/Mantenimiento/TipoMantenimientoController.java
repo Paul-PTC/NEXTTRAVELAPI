@@ -83,6 +83,7 @@ public class TipoMantenimientoController {
             );
         }
     }
+
     @PatchMapping("/ActualizarTipoMantenimiento/{idTipoMantenimiento}")
     public ResponseEntity<?> actualizarTipoMantenimientoParcial(
             @PathVariable Long idTipoMantenimiento,

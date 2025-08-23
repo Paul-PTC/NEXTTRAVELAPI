@@ -58,10 +58,9 @@ public class ServicesPago {
     }
 
 
-    public DTOPago ActualizarPago(Long idpago, DTOPago dto)
-            throws ExceptionsItinerarioEmpleadoNoEncontrado {
+    public DTOPago ActualizarPago(Long idpago, DTOPago dto){
 
-        EntitesPago entit = repo.findById(idpago).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Itinerario no encontrado con ID: " + idpago));
+        EntitesPago entit = repo.findById(idpago).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Pago no encontrado con ID: " + idpago));
 
         entit.setMonto(dto.getMonto());
         entit.setFechaPago(dto.getFechaPago());
@@ -70,6 +69,7 @@ public class ServicesPago {
         EntitesPago pago = repo.save(entit);
         return convertirAPagosEmpleadoDTO(pago);
     }
+
 
 
     public boolean eliminarPago(Long id) {
