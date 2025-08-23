@@ -2,9 +2,8 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.Mantenimiento;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExcepcionDatosDuplicados;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsTipoMantenimientoNoEncontrado;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.EmpleadoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TipoMantenimientoDTO;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Empleado.TipoMantenimientoServices;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Mantenimiento.TipoMantenimientoServices;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

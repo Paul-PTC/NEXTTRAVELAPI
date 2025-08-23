@@ -1,4 +1,4 @@
-package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Empleado;
+package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Mantenimiento;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.TipoMantenimietoEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsTipoMantenimientoNoEncontrado;
