@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class DetalleMantenimientoDTO {
 
-    @NotNull(message = "El idDetalleMantenimiento es obligatorio")
+
     private Long idDetalleMantenimiento;
 
     @NotNull(message = "El idTipoMantenimiento es obligatorio")

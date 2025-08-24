@@ -33,6 +33,9 @@ public class EstadoViajeServices {
         entity.setFechaEstado(dto.getFechaEstado());
         entity.setObservacion(dto.getObservacion());
 
+        // Ignorar el idEstadoViaje del DTO para que JPA genere el ID
+        // No hacer entity.setIdEstadoViaje(...);
+
         EstadoViajeEntities guardado = estadoViajeRepository.save(entity);
         return convertirADTO(guardado);
     }

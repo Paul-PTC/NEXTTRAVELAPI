@@ -18,12 +18,13 @@ public class CalificacionLugarEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_CalificaionLugar")
-    @SequenceGenerator(name = "seq_CalificaionLugar", sequenceName = "seq_CalificaionLugar", allocationSize = 1)
+    @Column(name = "IDCALIFICACIONLUGAR")
+    @SequenceGenerator(name = "seq_CalificaionLugar", sequenceName = "SEQ_CALIFICACIONLUGAR", allocationSize = 1)
     private Long idCalificacionLugar;
 
     // Relación con LugarTuristicoEntity
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDLUAGAR", nullable = false)
+    @JoinColumn(name = "IDLUGAR", nullable = false)
     private LugarTuristicoEntity lugar;
 
     // Relación con UsuarioEntity
@@ -31,13 +32,13 @@ public class CalificacionLugarEntity {
     @JoinColumn(name = "IDUSUARIO", nullable = false)
     private UserEntity usuario;
 
-    @Column(nullable = false)
+    @Column(name = "CALIFICACION", nullable = false)
     private int calificacion; // CHECK entre 1 y 5 se hace en la base de datos
 
-    @Column(length = 250)
+    @Column(name = "COMENTARIO", length = 250)
     private String comentario;
 
-    @Column(nullable = false)
+    @Column(name = "FECHACALIFICACION", nullable = false)
     private LocalDateTime fechaCalificacion;
 }
 

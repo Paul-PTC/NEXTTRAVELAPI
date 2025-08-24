@@ -1,25 +1,26 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.action.internal.OrphanRemovalAction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@GastoEntity
+@Entity
 @Table(name = "EMPLEADO")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = {"usuario", "reservas", "soportesAtendidos"})  // Excluir relaciones que generan ciclos
+@EqualsAndHashCode(exclude = {"usuario", "reservas", "soportesAtendidos"})
 public class EmpleadoEntities {
 
     @Id
-    @Column(name = "DUIEMPLEADO", unique = true)
+    @Column(name = "DUIEMPLEADO")
     private String duiEmpleado;
 
     @Column(name = "NOMBRE")
@@ -59,8 +60,4 @@ public class EmpleadoEntities {
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SoporteEntity> soportesAtendidos;
-
-    @OneToMany(mappedBy = "duiEmpleado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EntitesUbicacionEmpleado> ubicacionEmpleados = new ArrayList<>();
-
 }

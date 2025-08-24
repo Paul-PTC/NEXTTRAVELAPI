@@ -15,7 +15,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class DetalleMantenimientoEntities {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // o SEQUENCE si Oracle lo requiere
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "detalle_mantenimiento_seq")
+    @SequenceGenerator(name = "detalle_mantenimiento_seq", sequenceName = "SEQ_DETALLE_MANTENIMIENTO", allocationSize = 1)
     @Column(name = "IDDETALLEMANTENIMIENTO")
     private Integer idDetalleMantenimiento;
 

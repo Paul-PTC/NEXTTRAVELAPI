@@ -19,7 +19,7 @@ public class HorasPorViajeEntities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "horas_viaje_seq")
-    @SequenceGenerator(name = "horas_viaje_seq", sequenceName = "seq_horas_viaje", allocationSize = 1)
+    @SequenceGenerator(name = "horas_viaje_seq", sequenceName = "SEQ_HORAS_VIAJE", allocationSize = 1)
     @Column(name = "IDHORASVIAJE")
     private Long idHorasViaje;
 
@@ -28,20 +28,20 @@ public class HorasPorViajeEntities {
     private EmpleadoEntities empleado;
 
     @ManyToOne
-    @JoinColumn(name = "idVehiculo", referencedColumnName = "idVehiculo")
+    @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO")
     private VehiculosEntities idVehiculo;
 
     @ManyToOne
     @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA")
     private RutaEntities idRuta;
 
-    @Column(name = "FECHA")
+    @Column(name = "FECHAVIAJE")
     private Date fechaViaje;
 
-    @Column(name = "HORAINICIO")
+    @Column(name = "HORALLEGADA")
     private LocalDateTime horaLlegada;
 
-    @Column(name = "HORAFIN")
+    @Column(name = "HORASALIDA")
     private LocalDateTime horaSalida;
 
     @Column(name = "DURACION")

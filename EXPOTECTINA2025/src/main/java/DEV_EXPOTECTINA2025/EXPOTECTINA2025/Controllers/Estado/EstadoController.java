@@ -14,7 +14,8 @@ public class EstadoController {
     @Autowired
     private EstadoServices estadoServices;
 
-    @GetMapping
+
+    @GetMapping("obtenerEstado")
     public ResponseEntity<List<EstadoDTO>> obtenerTodos() {
         return ResponseEntity.ok(estadoServices.obtenerTodosEstados());
     }
@@ -28,13 +29,13 @@ public class EstadoController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping
+    @PostMapping("/AgregarEstado")
     public ResponseEntity<EstadoDTO> insertar(@RequestBody EstadoDTO dto) {
         EstadoDTO creado = estadoServices.insertarEstado(dto);
         return ResponseEntity.ok(creado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("ActualizaEstado/{id}")
     public ResponseEntity<EstadoDTO> actualizar(@PathVariable Integer id, @RequestBody EstadoDTO dto) {
         try {
             EstadoDTO actualizado = estadoServices.actualizarEstado(id, dto);
@@ -43,10 +44,9 @@ public class EstadoController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    @DeleteMapping("EliminarEstado/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         estadoServices.eliminarEstado(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("El registro fue eliminado exitosamente");
     }
 }

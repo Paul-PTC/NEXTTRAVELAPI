@@ -82,7 +82,7 @@ public class RangoEmpleadosControllers {
         }
     }
 
-    @DeleteMapping("EliminarRangoEmp/{id}")
+    @DeleteMapping("/EliminarRangoEmp/{id}")
     public ResponseEntity<Map<String, Object>> eliminarRangoEmp(@PathVariable Long id){
         try {
             if (!accesoRango.EliminarEmpleadoRango(id)){

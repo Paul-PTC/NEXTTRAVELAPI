@@ -81,8 +81,8 @@ public class LugarTuristicoControllers {
         }
     }
 
-    @DeleteMapping("EliminarRangoEmp/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarLugarTuristico(@PathVariable Long idLugar){
+    @DeleteMapping("EliminarLugar/{id}")
+    public ResponseEntity<Map<String, Object>> eliminarLugarTuristico(@PathVariable("id") Long idLugar){
         try {
             if (!ServicesLugar.EliminarLugarTuristico(idLugar)){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

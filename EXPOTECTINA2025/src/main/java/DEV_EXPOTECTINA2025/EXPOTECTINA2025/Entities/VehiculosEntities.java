@@ -18,7 +18,7 @@ public class VehiculosEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_Vehiculo")
     @SequenceGenerator(name = "seq_Vehiculo", sequenceName = "seq_Vehiculo", allocationSize = 1)
-    @Column(name = "idVehiculo")
+    @Column(name = "IDVEHICULO")
     private Integer idVehiculo;
 
     @Column(name = "PLACA", length = 10, nullable = false, unique = true)

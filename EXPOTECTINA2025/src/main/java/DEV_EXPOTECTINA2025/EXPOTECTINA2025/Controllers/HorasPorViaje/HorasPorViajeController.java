@@ -31,29 +31,51 @@ public class HorasPorViajeController {
         return servicio.getAllHorasPorViaje();
     }
 
-    @PostMapping("InsertaHorasViaje")
-    public ResponseEntity<Map<String, Object>> ResgistrarHoras(@Valid @RequestBody HorasPorViajeDTO HorasViaje, HttpServletRequest request) {
+    @PostMapping("/InsertaHorasViaje")
+    public ResponseEntity<Map<String, Object>> registrarHoras(
+            @Valid @RequestBody HorasPorViajeDTO horasViaje,
+            BindingResult result,
+            HttpServletRequest request) {
+
+        // Validación de campos
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            result.getFieldErrors().forEach(error ->
+                    errores.put(error.getField(), error.getDefaultMessage())
+            );
+
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "Inserción Incorrecta",
+                    "errorType", "VALIDATION_ERROR",
+                    "message", "Datos de horas del viaje inválidos",
+                    "errores", errores
+            ));
+        }
+
         try {
-            //Guardar
-            HorasPorViajeDTO res = servicio.InsertarHorasPorViaje(HorasViaje);
+            // Guardar
+            HorasPorViajeDTO res = servicio.InsertarHorasPorViaje(horasViaje);
+
             if (res == null) {
                 return ResponseEntity.badRequest().body(Map.of(
-                        "status", "Insercion Incorrecta",
-                        "errrorType", "VALIDATION_ERROR",
-                        "message", "Datos de Itinerario invalidos"
+                        "status", "Inserción Incorrecta",
+                        "errorType", "VALIDATION_ERROR",
+                        "message", "No se pudo insertar el registro de horas del viaje"
                 ));
             }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "status", "sucess",
+                    "status", "success",
+                    "message", "Registro de horas del viaje insertado correctamente",
                     "data", res
             ));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "status", "error",
-                            "message", "Error al registrar usuario",
-                            "detail", e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "error",
+                    "message", "Error al registrar las horas del viaje",
+                    "detail", e.getMessage()
+            ));
         }
     }
 
@@ -63,9 +85,10 @@ public class HorasPorViajeController {
             @Valid @RequestBody HorasPorViajeDTO HorasDTO,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            Map<String, Long> errores = new HashMap<>();
+            Map<String, String> errores = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error ->
-                    errores.put(error.getField(), Long.valueOf(error.getDefaultMessage())));
+                    errores.put(error.getField(), error.getDefaultMessage())
+            );
             return ResponseEntity.badRequest().body(errores);
         }
         try {
@@ -78,24 +101,6 @@ public class HorasPorViajeController {
                     Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
             );
 
-        }
-    }
-    @PatchMapping("/ActualizarHoras/{idHorasViaje}")
-    public ResponseEntity<?> actualizarHoras(
-            @PathVariable Long idHorasViaje,
-            @RequestBody HorasPorViajeDTO HorasDTO){
-        try {
-            HorasPorViajeDTO actualizado = servicio.ActualizarHorasPorViajes(idHorasViaje, HorasDTO);
-            return ResponseEntity.ok(actualizado);
-        } catch (ExceptionsItinerarioEmpleadoNoEncontrado e) {
-            return ResponseEntity.notFound().build();
-        } catch (ExcepcionDatosDuplicados e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    Map.of(
-                            "error", "Datos duplicados",
-                            "campo", e.getCampoDuplicado()
-                    )
-            );
         }
     }
 

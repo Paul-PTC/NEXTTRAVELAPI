@@ -31,7 +31,7 @@ public class CalificacionLugarController {
         }
     }
 
-    @GetMapping("/insertarCalificacion")
+    @GetMapping("/obtenerCalificacion")
     public ResponseEntity<List<CalificacionLugarDTO>> listar() {
         return ResponseEntity.ok(service.obtenerTodos());
     }

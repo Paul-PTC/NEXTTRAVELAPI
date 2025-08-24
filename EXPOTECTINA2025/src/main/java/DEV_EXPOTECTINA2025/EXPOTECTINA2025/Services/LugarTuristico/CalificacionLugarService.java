@@ -7,6 +7,7 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.CalificacionLugarDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.CalificacionLugarRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.LugarTuristicoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.UserRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,13 @@ public class CalificacionLugarService {
     @Autowired
     private LugarTuristicoRepository repoLugar;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public CalificacionLugarDTO registrar(CalificacionLugarDTO dto) {
         CalificacionLugarEntity entity = convertirAEntity(dto);
         CalificacionLugarEntity guardado = repo.save(entity);
+
         return convertirADTO(guardado);
     }
 
@@ -58,20 +63,21 @@ public class CalificacionLugarService {
         return dto;
     }
 
-    private CalificacionLugarEntity convertirAEntity(CalificacionLugarDTO dto) {
+
+    public CalificacionLugarEntity convertirAEntity(CalificacionLugarDTO dto) {
         CalificacionLugarEntity entity = new CalificacionLugarEntity();
+        // otras asignaciones simples...
 
-        LugarTuristicoEntity lugar = new LugarTuristicoEntity();
-        lugar.setIdLugar(dto.getIdLugar());
-
-        UserEntity usuario = new UserEntity();
-        usuario.setId(dto.getIdUsuario());
+        LugarTuristicoEntity lugar = entityManager.getReference(LugarTuristicoEntity.class, dto.getIdLugar());
+        UserEntity usuario = entityManager.getReference(UserEntity.class, dto.getIdUsuario());
 
         entity.setLugar(lugar);
         entity.setUsuario(usuario);
+
         entity.setCalificacion(dto.getCalificacion());
         entity.setComentario(dto.getComentario());
         entity.setFechaCalificacion(dto.getFechaCalificacion());
+
         return entity;
     }
     public CalificacionLugarDTO actualizarCalificacion(Long id, CalificacionLugarDTO dto) {

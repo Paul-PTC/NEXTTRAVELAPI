@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @ToString
 @EqualsAndHashCode
@@ -30,13 +32,13 @@ public class ItinerarioEmpleadoDTO {
 
 
     @NotBlank(message = "La fecha es obligatorio")
-    private Date fecha;
+    private LocalDate fecha;
 
     @NotBlank(message = "La hora de inicio es obligatorio")
-    private Date horaInicio;
+    private LocalTime horaInicio;
 
     @NotBlank(message = "La hora de finalizacion es obligatorio")
-    private Date horaFin;
+    private LocalTime horaFin;
 
     @NotBlank(message = "La observacion es obligatoria")
     private String Observaciones;

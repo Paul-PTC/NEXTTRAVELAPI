@@ -1,9 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.HoraPorViaje;
 
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EmpleadoEntities;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.HorasPorViajeEntities;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ItinerarioEmpleadoEntities;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.RutaEntities;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.*;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsHorasPorViajeNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmpleadoNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.HorasPorViajeDTO;
@@ -11,9 +8,11 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ItinerarioEmpleadoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.HorasPorViajeRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RutaRepository;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.VehiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 
 import java.sql.Date;
@@ -32,142 +31,140 @@ public class HoraPorViajeServices {
 
     @Autowired
     private RutaRepository RutRepo;
+    @Autowired
+    private VehiculoRepository vehiculoRepository;
 
-    public List<HorasPorViajeDTO> getAllHorasPorViaje(){
+    public List<HorasPorViajeDTO> getAllHorasPorViaje() {
         List<HorasPorViajeEntities> datos = repo.findAll();
         return datos.stream()
                 .map(this::convertirAHorasDTO)
                 .collect(Collectors.toList());
     }
-     public HorasPorViajeDTO InsertarHorasPorViaje(HorasPorViajeDTO Dto){
-        try{
+
+    @PostMapping("/InsertarHorasViaje")
+    public HorasPorViajeDTO InsertarHorasPorViaje(HorasPorViajeDTO dto) {
+        try {
             HorasPorViajeEntities nuevasHorasPorViajes = new HorasPorViajeEntities();
-             //aIGNAMOS LOS DATOS
-            nuevasHorasPorViajes.setIdHorasViaje(Dto.getIdHorasViaje());
-            nuevasHorasPorViajes.setHoraSalida(Dto.getHoraSalida());
-            nuevasHorasPorViajes.setHoraLlegada(Dto.getHoraLlegada());
-            nuevasHorasPorViajes.setEmpleado(Dto.getEmpleado());
-            nuevasHorasPorViajes.setDuracion(Dto.getDuracion());
-            nuevasHorasPorViajes.setFechaViaje((Date) Dto.getFechaViaje());
 
-            //Relacion con EmpleadoEntities
-            Optional<EmpleadoEntities> EmpleadoEncontrado = EmpRep.findById(String.valueOf(Dto.getEmpleado()));
-            if (EmpRep != null) {
-                nuevasHorasPorViajes.setEmpleado((EmpleadoEntities) EmpRep);
-            }else {
-                return null;//No encontrado
-            }
+            // Asignación de datos básicos
+            nuevasHorasPorViajes.setIdHorasViaje(dto.getIdHorasViaje());
+            nuevasHorasPorViajes.setHoraSalida(dto.getHoraSalida());
+            nuevasHorasPorViajes.setHoraLlegada(dto.getHoraLlegada());
+            nuevasHorasPorViajes.setDuracion(dto.getDuracion());
 
-            //Relacion RutaEntities
-            Optional<RutaEntities> rutaEncontrada = RutRepo.findById(Dto.getIdRuta());
-            if (rutaEncontrada.isPresent()){
-                nuevasHorasPorViajes.setIdRuta(rutaEncontrada.get());
-            }else {
-                return null;
+            // Convertir java.util.Date a java.sql.Date
+            nuevasHorasPorViajes.setFechaViaje(new java.sql.Date(dto.getFechaViaje().getTime()));
+
+            // Relación con Empleado - buscar empleado por DUI (String)
+            Optional<EmpleadoEntities> empleadoEncontrado = EmpRep.findById(dto.getEmpleado());
+            if (empleadoEncontrado.isEmpty()) {
+                return null; // Empleado no encontrado
             }
+            nuevasHorasPorViajes.setEmpleado(empleadoEncontrado.get());
+
+            // Relación con Vehiculo - buscar Vehiculo por Id
+            Optional<VehiculosEntities> vehiculoEncontrado = vehiculoRepository.findById(dto.getIdVehiculo());
+            if (vehiculoEncontrado.isEmpty()) {
+                return null; // Vehículo no encontrado
+            }
+            nuevasHorasPorViajes.setIdVehiculo(vehiculoEncontrado.get());
+
+            // Relación con Ruta - buscar Ruta por Id
+            Optional<RutaEntities> rutaEncontrada = RutRepo.findById(dto.getIdRuta());
+            if (rutaEncontrada.isEmpty()) {
+                return null; // Ruta no encontrada
+            }
+            nuevasHorasPorViajes.setIdRuta(rutaEncontrada.get());
+
+            // Guardar entidad
             repo.save(nuevasHorasPorViajes);
-            return Dto;
-        }catch (Exception e){
+
+            return dto;
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-     }
+    }
 
-     public HorasPorViajeDTO ActualizarHorasPorViaje(Long idHorasViaje,HorasPorViajeDTO horasViajedto) {
-         HorasPorViajeEntities HorasViajeExistentes = repo.findById(idHorasViaje).orElseThrow(() -> new ExceptionsHorasPorViajeNoEncontrado("Horas No encontradas"));
 
-         //Actualizar campos
-         HorasViajeExistentes.setIdHorasViaje(horasViajedto.getIdHorasViaje());
-         HorasViajeExistentes.setHoraSalida(horasViajedto.getHoraSalida());
-         HorasViajeExistentes.setHoraLlegada(horasViajedto.getHoraLlegada());
-         HorasViajeExistentes.setEmpleado(horasViajedto.getEmpleado());
-         HorasViajeExistentes.setDuracion(horasViajedto.getDuracion());
-         HorasViajeExistentes.setFechaViaje((Date) horasViajedto.getFechaViaje());
-
-         //Relacion con Empleado
-         if (horasViajedto.getEmpleado() != null) {
-             EmpleadoEntities Emp = EmpRep.findById(String.valueOf(horasViajedto.getEmpleado()))
-                     .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con el ID proporcionado"));
-             HorasViajeExistentes.setEmpleado(Emp);
-         } else {
-             HorasViajeExistentes.setEmpleado(null);
-         }
-         //Actualizar con rango
-         RutaEntities ruta = null;
-         if (horasViajedto.getIdRuta() != null) {
-             ruta = RutRepo.findById(horasViajedto.getIdRuta())
-                     .orElseThrow(() -> new IllegalArgumentException("Ruta no encontrado con ID propocionado"));
-             HorasViajeExistentes.setIdRuta(ruta);
-         } else {
-             HorasViajeExistentes.setIdRuta(null);
-         }
-         HorasPorViajeEntities actualizarHoras = repo.save(HorasViajeExistentes);
-         return convertirAHorasDTO(actualizarHoras);
-     }
-
-    public HorasPorViajeDTO ActualizarHorasPorViajes(Long idHorasViaje, HorasPorViajeDTO horasViajdto) {
-        // Buscar entidad existente
+    public HorasPorViajeDTO ActualizarHorasPorViaje(Long idHorasViaje, HorasPorViajeDTO horasViajedto) {
+        // Buscar entidad existente o lanzar excepción si no existe
         HorasPorViajeEntities horasViajeExistentes = repo.findById(idHorasViaje)
-                .orElseThrow(() -> new ExceptionsHorasPorViajeNoEncontrado("Horas no encontradas con ID: " + idHorasViaje));
+                .orElseThrow(() -> new ExceptionsHorasPorViajeNoEncontrado("Horas No encontradas"));
 
         // Actualizar campos básicos
-        horasViajeExistentes.setIdHorasViaje(horasViajdto.getIdHorasViaje());
-        horasViajeExistentes.setHoraSalida(horasViajdto.getHoraSalida());
-        horasViajeExistentes.setHoraLlegada(horasViajdto.getHoraLlegada());
-        horasViajeExistentes.setEmpleado(horasViajdto.getEmpleado());
-        horasViajeExistentes.setDuracion(horasViajdto.getDuracion());
-        horasViajeExistentes.setFechaViaje((Date) horasViajdto.getFechaViaje());
+        horasViajeExistentes.setHoraSalida(horasViajedto.getHoraSalida());
+        horasViajeExistentes.setHoraLlegada(horasViajedto.getHoraLlegada());
+        horasViajeExistentes.setDuracion(horasViajedto.getDuracion());
 
-        // Relación con Empleado
-        if (horasViajdto.getEmpleado() != null) {
-            EmpleadoEntities emp = EmpRep.findById(String.valueOf(horasViajdto.getEmpleado()))
-                    .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con el ID proporcionado"));
-            horasViajeExistentes.setEmpleado(emp);
+        // Convertir java.util.Date a java.sql.Date para fechaViaje
+        if (horasViajedto.getFechaViaje() != null) {
+            horasViajeExistentes.setFechaViaje(new java.sql.Date(horasViajedto.getFechaViaje().getTime()));
+        } else {
+            horasViajeExistentes.setFechaViaje(null);
+        }
+
+        // Actualizar relación con Empleado (buscar por DUI, que es String en DTO)
+        if (horasViajedto.getEmpleado() != null) {
+            EmpleadoEntities empleado = EmpRep.findById(horasViajedto.getEmpleado())
+                    .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con el DUI proporcionado"));
+            horasViajeExistentes.setEmpleado(empleado);
         } else {
             horasViajeExistentes.setEmpleado(null);
         }
 
-        // Relación con Ruta
-        if (horasViajdto.getIdRuta() != null) {
-            RutaEntities ruta = RutRepo.findById(horasViajdto.getIdRuta())
-                    .orElseThrow(() -> new IllegalArgumentException("Ruta no encontrada con ID proporcionado"));
+        // Actualizar relación con Ruta
+        if (horasViajedto.getIdRuta() != null) {
+            RutaEntities ruta = RutRepo.findById(horasViajedto.getIdRuta())
+                    .orElseThrow(() -> new IllegalArgumentException("Ruta no encontrada con el ID proporcionado"));
             horasViajeExistentes.setIdRuta(ruta);
         } else {
             horasViajeExistentes.setIdRuta(null);
         }
 
-        // Guardar cambios
+        // Actualizar relación con Vehiculo (agregado, porque faltaba)
+        if (horasViajedto.getIdVehiculo() != null) {
+            VehiculosEntities vehiculo = vehiculoRepository.findById(horasViajedto.getIdVehiculo())
+                    .orElseThrow(() -> new IllegalArgumentException("Vehículo no encontrado con el ID proporcionado"));
+            horasViajeExistentes.setIdVehiculo(vehiculo);
+        } else {
+            horasViajeExistentes.setIdVehiculo(null);
+        }
+
+        // Guardar entidad actualizada
         HorasPorViajeEntities actualizarHoras = repo.save(horasViajeExistentes);
 
-        // Retornar DTO actualizado
+        // Convertir entidad a DTO y retornar
         return convertirAHorasDTO(actualizarHoras);
     }
 
 
-     public boolean EliminarHorasPorViaje(Long idHoraViaje){
-        try{
+    public boolean EliminarHorasPorViaje(Long idHoraViaje) {
+        try {
             //Validamos existencia
             RutaEntities objRutas = Objects.requireNonNull(repo.findById(idHoraViaje).orElse(null)).getIdRuta();
             //Si existe se elimina
-            if(objRutas != null){
+            if (objRutas != null) {
                 repo.deleteById(idHoraViaje);
                 return true;
-            }else {
+            } else {
                 System.out.println("Horas de viaje no encontradas");
                 return false;
             }
-        }catch (EmptyResultDataAccessException e){
-         throw  new EmptyResultDataAccessException("No se Encontraron Horas de viaje con ID" + idHoraViaje + "para eliminar", 1);
-     }
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultDataAccessException("No se Encontraron Horas de viaje con ID" + idHoraViaje + "para eliminar", 1);
+        }
     }
 
     //Convertir Entity a DTO
-    private HorasPorViajeDTO convertirAHorasDTO(HorasPorViajeEntities horas){
+    private HorasPorViajeDTO convertirAHorasDTO(HorasPorViajeEntities horas) {
         HorasPorViajeDTO dto = new HorasPorViajeDTO();
 
         dto.setIdHorasViaje(horas.getIdHorasViaje());
         dto.setHoraSalida(horas.getHoraSalida());
         dto.setHoraLlegada(horas.getHoraLlegada());
-        dto.setEmpleado(horas.getEmpleado());
+        dto.setEmpleado(String.valueOf(horas.getEmpleado()));
         dto.setDuracion(horas.getDuracion());
         dto.setFechaViaje((Date) horas.getFechaViaje());
 
@@ -176,26 +173,26 @@ public class HoraPorViajeServices {
 
     //Converitr DTO A ENTITYYYY
 
-    private HorasPorViajeEntities convertirAHorasEntity (HorasPorViajeDTO dto){
+    private HorasPorViajeEntities convertirAHorasEntity(HorasPorViajeDTO dto) {
         HorasPorViajeEntities ent = new HorasPorViajeEntities();
 
         dto.setIdHorasViaje(ent.getIdHorasViaje());
         dto.setHoraSalida(ent.getHoraSalida());
         dto.setHoraLlegada(ent.getHoraLlegada());
-        dto.setEmpleado(ent.getEmpleado());
+        dto.setEmpleado(String.valueOf(ent.getEmpleado()));
         dto.setDuracion(ent.getDuracion());
         dto.setFechaViaje((Date) ent.getFechaViaje());
-        if (dto.getEmpleado() != null){
+        if (dto.getEmpleado() != null) {
             EmpleadoEntities emp = EmpRep.findById(String.valueOf(dto.getEmpleado()))
                     .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con ID: " + dto.getEmpleado()));
             ent.setEmpleado(emp);
         }
-        if (dto.getIdRuta() != null){
+        if (dto.getIdRuta() != null) {
             RutaEntities ruta = RutRepo.findById(dto.getIdRuta())
                     .orElseThrow(() -> new IllegalArgumentException("RUTA no encontrado con ID: " + dto.getIdRuta()));
             ent.setIdRuta(ruta);
         }
-        return  ent;
+        return ent;
     }
 
 }

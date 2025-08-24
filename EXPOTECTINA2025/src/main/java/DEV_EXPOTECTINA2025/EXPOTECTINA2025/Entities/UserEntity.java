@@ -1,5 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
+
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "USUARIO") // Corregido según tu tabla real
+@Table(name = "USUARIO")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "empleados") // Excluimos la lista para evitar ciclo
+@EqualsAndHashCode(exclude = "empleados")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_usuario")
@@ -34,10 +35,6 @@ public class UserEntity {
     @Column(name = "ROL")
     private String rol;
 
-    /**
-     * Se mapea que la relación apuntará hacia el atributo usuario de EmpleadoEntities
-     * ya que se podrá tener un usuario en muchos empleados.
-     */
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<EmpleadoEntities> empleados = new ArrayList<>();
 }

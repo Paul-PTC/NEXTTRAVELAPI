@@ -19,13 +19,13 @@ public class SoporteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_soporte")
     @SequenceGenerator(name = "seq_soporte", sequenceName = "seq_Soporte", allocationSize = 1)
-    @Column(name = "ID_SOPORTE")
+    @Column(name = "IDSOPORTE")
     private Long idSoporte;
 
-    @Column(name = "DUI_CLIENTE", nullable = false, length = 10)
+    @Column(name = "DUICLIENTE", nullable = false, length = 10)
     private String duiCliente;
 
-    @Column(name = "DUI_EMPLEADO", nullable = false, length = 10)
+    @Column(name = "DUIEMPLEADO", nullable = false, length = 10)
     private String duiEmpleado;
 
     @Column(name = "ASUNTO", nullable = false, length = 100)
@@ -40,15 +40,15 @@ public class SoporteEntity {
     @Column(name = "ESTADO", nullable = false, length = 50)
     private String estado;
 
-    @Column(name = "FECHA_SOLICITUD", nullable = false)
+    @Column(name = "FECHASOLICITUD", nullable = false)
     private LocalDateTime fechaSolicitud;
 
     @ManyToOne
-    @JoinColumn(name = "DUI_CLIENTE", referencedColumnName = "DUICLIENTE", insertable = false, updatable = false)
+    @JoinColumn(name = "DUICLIENTE", referencedColumnName = "DUICLIENTE", insertable = false, updatable = false)
     private ClienteEntities cliente;
 
     @ManyToOne
-    @JoinColumn(name = "DUI_EMPLEADO", referencedColumnName = "DUIEMPLEADO", insertable = false, updatable = false)
+    @JoinColumn(name = "DUIEMPLEADO", referencedColumnName = "DUIEMPLEADO", insertable = false, updatable = false)
     private EmpleadoEntities empleado;
 }
 
