@@ -20,55 +20,68 @@ public class DetalleMantenimientoServices {
     private DetalleMantenimientoRepository repo;
 
     public List<DetalleMantenimientoDTO> getAllDetallesMantenimiento() {
-        List<DetalleMantenimientoEntities> detalleMantenimientoEntities  = repo.findAll();
+        List<DetalleMantenimientoEntities> detalleMantenimientoEntities = repo.findAll();
         return detalleMantenimientoEntities.stream()
                 .map(this::convertirADetalleDTO)
                 .collect(Collectors.toList());
     }
 
-    public DetalleMantenimientoDTO insertarDetalleMantenimiento(DetalleMantenimientoDTO dto){
+    public DetalleMantenimientoDTO insertarDetalleMantenimiento(DetalleMantenimientoDTO dto) {
+        long start = System.currentTimeMillis();
         try {
             DetalleMantenimientoEntities nuevoDetalle = new DetalleMantenimientoEntities();
-
-            //Ponemos los nuevos datos
             nuevoDetalle.setIdMantenimiento(Math.toIntExact(dto.getIdMantenimiento()));
             nuevoDetalle.setDescripcion(dto.getDescripcion());
-            nuevoDetalle.setIdDetalleMantenimiento(Math.toIntExact(dto.getIdMantenimiento()));
             nuevoDetalle.setIdTipoMantenimiento(Math.toIntExact(dto.getIdTipoMantenimiento()));
-            //Guardamos
+
             repo.save(nuevoDetalle);
+
+            long end = System.currentTimeMillis();
+            System.out.println("insertarDetalleMantenimiento duró: " + (end - start) + " ms");
+
             return dto;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
-    public DetalleMantenimientoDTO actualizarDetalle(Long idDetalle, DetalleMantenimientoDTO dto){
-        //1. Verificar existencia
-       DetalleMantenimientoEntities DetalleExistente = repo.findById(String.valueOf(idDetalle)).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Rango no encontrado"));
-        //2. Actualizar campos
-        DetalleExistente.setIdMantenimiento(Math.toIntExact(dto.getIdMantenimiento()));
-        DetalleExistente.setDescripcion(dto.getDescripcion());
-        DetalleExistente.setIdDetalleMantenimiento(Math.toIntExact(dto.getIdMantenimiento()));
-        DetalleExistente.setIdTipoMantenimiento(Math.toIntExact(dto.getIdTipoMantenimiento()));
-        // 5 Guardar cambios
-        DetalleMantenimientoEntities detalleActualizar = repo.save(DetalleExistente);
-        // 6 Convertir a DTO
-        return convertirADetalleDTO(detalleActualizar);
-    }
-    public boolean EliminarDetalleMantenimiento(Long idDetalle){
+
+    public DetalleMantenimientoDTO actualizarDetalle(Long idDetalle, DetalleMantenimientoDTO dto) {
         try {
-        DetalleMantenimientoEntities objDetalle = repo.findById(String.valueOf(idDetalle)).orElse(null);
+            // Busca por id numérico, no por String
+            DetalleMantenimientoEntities detalleExistente = repo.findById(String.valueOf(idDetalle.intValue()))
+                    .orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Detalle no encontrado"));
+
+            // Actualiza solo campos modificables (NO el ID)
+            detalleExistente.setIdMantenimiento(dto.getIdMantenimiento().intValue());
+            detalleExistente.setDescripcion(dto.getDescripcion());
+            detalleExistente.setIdTipoMantenimiento(dto.getIdTipoMantenimiento().intValue());
+
+            DetalleMantenimientoEntities detalleActualizado = repo.save(detalleExistente);
+            return convertirADetalleDTO(detalleActualizado);
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Para loguear cualquier error
+            throw e; // Puedes propagar la excepción o manejarla como prefieras
+        }
+    }
+
+    public boolean EliminarDetalleMantenimiento(Long idDetalle) {
+        try {
+            DetalleMantenimientoEntities objDetalle = repo.findById(String.valueOf(idDetalle.intValue())).orElse(null);
             if (objDetalle != null) {
-                repo.deleteById(String.valueOf(idDetalle));
+                repo.deleteById(String.valueOf(idDetalle.intValue()));
                 return true;
-            }
-            else {
-                System.out.println("Rango no encontrado");
+            } else {
+                System.out.println("Detalle no encontrado");
                 return false;
             }
-        }catch (EmptyResultDataAccessException e){
-            throw new EmptyResultDataAccessException("No se encontro usuario con ID: " + idDetalle + " para eliminar.", 1);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw new EmptyResultDataAccessException("No se encontro detalle con ID: " + idDetalle + " para eliminar.", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -77,7 +90,7 @@ public class DetalleMantenimientoServices {
         DetalleMantenimientoDTO dto = new DetalleMantenimientoDTO();
         dto.setIdDetalleMantenimiento(Long.valueOf(entities.getIdDetalleMantenimiento()));
         dto.setIdTipoMantenimiento(Long.valueOf(entities.getIdTipoMantenimiento()));
-        dto.setIdDetalleMantenimiento(Long.valueOf(entities.getIdTipoMantenimiento()));
+        dto.setIdMantenimiento(Long.valueOf(entities.getIdMantenimiento())); // corregido
         dto.setDescripcion(entities.getDescripcion());
         return dto;
     }

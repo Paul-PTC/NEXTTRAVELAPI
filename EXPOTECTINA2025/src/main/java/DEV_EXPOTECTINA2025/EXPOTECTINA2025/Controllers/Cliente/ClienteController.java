@@ -1,5 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.Cliente;
 
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ClienteEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ClienteDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Cliente.ClienteServices;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class ClienteController {
         }
 
         try {
-            ClienteDTO nuevoCliente = clienteService.insertarCliente(clienteDTO);
+            ClienteEntities nuevoCliente = clienteService.insertarCliente(clienteDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoCliente);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -43,7 +44,7 @@ public class ClienteController {
         }
     }
 
-    @PutMapping("/clientes/{dui}")
+    @PutMapping("/clientesActualizar/{dui}")
     public ResponseEntity<?> actualizarCliente(@PathVariable String dui,
                                                @Valid @RequestBody ClienteDTO clienteDTO,
                                                BindingResult bindingResult) {
@@ -66,7 +67,7 @@ public class ClienteController {
         }
     }
 
-    @DeleteMapping("/clientes/{dui}")
+    @DeleteMapping("eliminarClientes/{dui}")
     public ResponseEntity<?> eliminarCliente(@PathVariable String dui) {
         boolean eliminado = clienteService.eliminarCliente(dui);
         if (!eliminado) {

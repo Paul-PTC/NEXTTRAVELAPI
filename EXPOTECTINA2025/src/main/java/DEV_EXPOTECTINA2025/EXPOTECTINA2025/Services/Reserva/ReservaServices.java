@@ -1,5 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Reserva;
 
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ClienteEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ReservaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
@@ -65,8 +66,13 @@ public class ReservaServices {
     }
 
     // Eliminar
-    public void eliminarReserva(Long id) {
-        reservaRepository.deleteById(id);
+    public boolean eliminarReserva(Long id) {
+        Optional<ReservaEntities> cliente = reservaRepository.findById((id));
+        if (cliente.isPresent()) {
+            reservaRepository.deleteById((id));
+            return true;
+        }
+        return false;
     }
 
     // Convertir Entity a DTO

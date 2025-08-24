@@ -10,16 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "RANGOEMPLEADO") // Corregido según tu tabla real
+@Table(name = "RANGOEMPLEADO")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "empleados") // Excluimos la lista para evitar recursión infinita
+@EqualsAndHashCode(exclude = "empleados") // Igual para equals y hashCode
 public class RangoEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_rango_empleado")
-    @SequenceGenerator(name = "seq_rango_empleado", sequenceName = "seq_rango_empleado", allocationSize = 1)
+    @SequenceGenerator(name = "seq_rango_empleado", sequenceName = "SEQ_RANGOEMPLEADO", allocationSize = 1)
     @Column(name = "IDRANGO")
     private Long id;
 
@@ -29,10 +28,6 @@ public class RangoEntity {
     @Column(name = "DESCRIPCION")
     private String descripcion;
 
-    /**
-     * Se mapea que la relación apuntará hacia el atributo rango de EmpleadoEntities
-     * ya que se podrá tener un rango en muchos empleados.
-     */
     @OneToMany(mappedBy = "rango", cascade = CascadeType.ALL)
     private List<EmpleadoEntities> empleados = new ArrayList<>();
 }

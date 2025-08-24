@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "ITINERARIOEMPLEADO")
@@ -32,13 +35,13 @@ public class ItinerarioEmpleadoEntities {
     private RutaEntities idRuta;
 
     @Column(name = "FECHA")
-    private Date fecha;
+    private LocalDate fecha;
 
     @Column(name = "HORAINICIO")
-    private Date horaInicio;
+    private LocalTime horaInicio;
 
     @Column(name = "HORAFIN")
-    private Date horaFin;
+    private  LocalTime horaFin;
 
     @Column(name = "OBSERVACIONES")
     private String Observaciones;

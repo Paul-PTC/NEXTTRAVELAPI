@@ -31,28 +31,30 @@ public class DetalleMantenimientoController {
     }
 
     @PostMapping("/insertarDetalleMantenimiento")
-    public ResponseEntity<Map<String, Object>> registrarDetalleMantenimiento(@Valid @RequestBody DetalleMantenimientoDTO detalleMantenimiento, HttpServletRequest request) {
+    public ResponseEntity<?> registrarDetalleMantenimiento(@Valid @RequestBody DetalleMantenimientoDTO dto) {
+        System.out.println("Inicio petición POST insertarDetalleMantenimiento");
         try {
-            //Intentamos guardar los datos
-            DetalleMantenimientoDTO respuesta = services.insertarDetalleMantenimiento(detalleMantenimiento);
-            if (respuesta == null) {
+            DetalleMantenimientoDTO res = services.insertarDetalleMantenimiento(dto);
+            System.out.println("Despues de guardar en base de datos");
+            if (res == null) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", "Inserción incorrecta",
                         "errorType", "VALIDATION_ERROR",
                         "message", "Datos del detalle inválidos"
                 ));
             }
+            System.out.println("Respuesta exitosa");
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "status", "sucess",
-                    "data", respuesta
+                    "status", "success",
+                    "data", res
             ));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "status", "error",
-                            "message", "Error al registrar usuario",
-                            "detail", e.getMessage()
-                    ));
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "error",
+                    "message", "Error al registrar detalle",
+                    "detail", e.getMessage()
+            ));
         }
     }
 

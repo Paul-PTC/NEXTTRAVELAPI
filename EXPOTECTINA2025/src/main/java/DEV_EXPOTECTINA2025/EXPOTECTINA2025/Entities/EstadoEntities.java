@@ -17,7 +17,8 @@ import lombok.*;
 public class EstadoEntities {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "estado_seq_gen")
+    @SequenceGenerator(name = "estado_seq_gen", sequenceName = "SEQ_ESTADO", allocationSize = 1)
     @Column(name = "IDESTADO")
     private Long idEstado;
 

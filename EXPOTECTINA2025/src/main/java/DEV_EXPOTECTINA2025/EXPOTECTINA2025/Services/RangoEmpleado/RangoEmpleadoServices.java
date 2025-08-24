@@ -26,23 +26,21 @@ public class RangoEmpleadoServices {
                 .collect(Collectors.toList());
     }
 
-    public RangoDTO insertarRangoEmpleado(RangoDTO dto){
+    public RangoDTO insertarRangoEmpleado(RangoDTO dto) {
         try {
             RangoEntity nuevoRangoEmpleado = new RangoEntity();
 
-            //Ponemos los nuevos datos
             nuevoRangoEmpleado.setNombreRango(dto.getNombreRango());
             nuevoRangoEmpleado.setDescripcion(dto.getDescripcion());
 
-            //Guardamos
             rangoRepository.save(nuevoRangoEmpleado);
+
             return dto;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace(); // ¡Para que puedas ver el error!
             return null;
         }
     }
-
     public RangoDTO actualizarRangoEmpleado(Long id, RangoDTO dto){
         //1. Verificar existencia
         RangoEntity rangoExistente = rangoRepository.findById(id).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Rango no encontrado"));

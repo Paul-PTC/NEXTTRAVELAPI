@@ -15,8 +15,8 @@ import java.util.Optional;
 @Table(name = "EMPLEADO")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = {"usuario", "reservas", "soportesAtendidos"})  // Excluir relaciones que generan ciclos
+@EqualsAndHashCode(exclude = {"usuario", "reservas", "soportesAtendidos"})
 public class EmpleadoEntities {
 
     @Id
@@ -60,5 +60,4 @@ public class EmpleadoEntities {
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SoporteEntity> soportesAtendidos;
-
 }

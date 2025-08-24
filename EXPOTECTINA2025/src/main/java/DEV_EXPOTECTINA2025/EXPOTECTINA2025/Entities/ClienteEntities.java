@@ -20,54 +20,50 @@ import java.sql.Date;
 @EqualsAndHashCode
 public class ClienteEntities {
     @Id
-    @Column(name = "duiCliente", length = 10)
+    @Column(name = "DUICLIENTE", length = 10)
     @NotBlank(message = "El DUI es obligatorio")
     private String duiCliente;
 
-    @NotNull(message = "El ID de usuario es obligatorio")
-    @Column(name = "idUsuario")
-    private Long idUsuario;
-
     @NotBlank(message = "El nombre es obligatorio")
-    @Column(name = "nombre", length = 50, nullable = false)
+    @Column(name = "NOMBRE", length = 50, nullable = false)
     private String nombre;
 
     @NotBlank(message = "El apellido es obligatorio")
-    @Column(name = "apellido", length = 50, nullable = false)
+    @Column(name = "APELLIDO", length = 50, nullable = false)
     private String apellido;
 
     @NotBlank(message = "El teléfono es obligatorio")
-    @Column(name = "telefono", length = 20, nullable = false)
+    @Column(name = "TELEFONO", length = 20, nullable = false)
     private String telefono;
 
     @NotBlank(message = "El correo es obligatorio")
     @Email(message = "Debe ser un correo válido")
-    @Column(name = "correo", length = 100, nullable = false, unique = true)
+    @Column(name = "CORREO", length = 100, nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "genero", length = 15)
+    @Column(name = "GENERO", length = 15)
     private String genero;
 
     @Min(value = 0, message = "La edad debe ser un número positivo")
-    @Column(name = "edad")
+    @Column(name = "EDAD")
     private Integer edad;
 
     @NotBlank(message = "El estado es obligatorio")
-    @Column(name = "estado", length = 20, nullable = false)
+    @Column(name = "ESTADO", length = 20, nullable = false)
     private String estado;
 
-    @Column(name = "direccion", length = 200)
+    @Column(name = "DIRECCION", length = 200)
     private String direccion;
 
     @NotNull(message = "La fecha de registro es obligatoria")
-    @Column(name = "fechaRegistro", nullable = false)
+    @Column(name = "FECHAREGISTRO", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro;
 
-    @Column(name = "fotoPerfil", length = 255)
+    @Column(name = "FOTOPERFIL", length = 255)
     private String fotoPerfil;
 
     @ManyToOne
-    @JoinColumn(name = "idUsuario", insertable = false, updatable = false)
+    @JoinColumn(name = "IDUSUARIO", nullable = false)
     private UserEntity usuario;
 }

@@ -20,7 +20,7 @@ public class LugarTuristicoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_lugar_turistico")
-    @SequenceGenerator(name = "seq_lugar_turistico", sequenceName = "seq_lugar_turistico", allocationSize = 1)
+    @SequenceGenerator(name = "seq_lugar_turistico", sequenceName = "SEQ_LUGAR_TURISTICO", allocationSize = 1)
     @Column(name = "IDLUGAR")
     private Long idLugar;
 
