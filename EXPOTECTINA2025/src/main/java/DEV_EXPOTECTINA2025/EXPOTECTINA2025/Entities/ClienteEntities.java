@@ -12,7 +12,7 @@ import lombok.ToString;
 
 import java.sql.Date;
 
-@GastoEntity
+@Entity
 @Table(name = "CLIENTE")
 @Getter
 @Setter

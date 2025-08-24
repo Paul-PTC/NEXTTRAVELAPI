@@ -1,5 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.LugarTuristico;
 
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.LugarTuristicoEntity;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.MultimediaPaqueteEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.MultimediaPaqueteDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.MultimediaPaqueteRepository;

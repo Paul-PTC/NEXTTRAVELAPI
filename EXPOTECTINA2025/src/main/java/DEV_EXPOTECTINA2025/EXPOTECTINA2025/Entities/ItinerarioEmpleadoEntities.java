@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@GastoEntity
+@Entity
 @Table(name = "ITINERARIOEMPLEADO")
 @Getter
 @Setter

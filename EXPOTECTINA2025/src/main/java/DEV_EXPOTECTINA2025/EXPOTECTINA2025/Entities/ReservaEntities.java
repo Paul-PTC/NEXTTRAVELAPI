@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@GastoEntity
+@Entity
 @Table(name = "RESERVA")
 @Getter @Setter
 public class ReservaEntities {

@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@GastoEntity
+@Entity
 @Table(name = "CALIFICACIONLUGAR")  // ← Nombre exacto de la tabla en mayúsculas
 @Getter
 @Setter
