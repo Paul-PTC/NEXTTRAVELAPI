@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UbicacionEmpleadoService {
 
+    @Autowired
     private UbicacionEmpleadoRepository ubicacionRepo;
+    @Autowired
     private EmpleadoRepository empleadoRepo;
 
-    // listar
-    public List<UbicacionEmpleadoDTO> listar() {
+    public List<UbicacionEmpleadoDTO> getAll() {
         return ubicacionRepo.findAll()
                 .stream()
                 .map(this::toDTO)

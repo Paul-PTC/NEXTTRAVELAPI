@@ -8,6 +8,7 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ChatRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ClienteRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,25 +45,48 @@ public class ChatService {
         return toDTO(e);
     }
 
-    // CREAR
+    @Transactional
     public ChatDTO registrar(@Valid ChatDTO dto) {
-        ClienteEntities cliente = clienteRepo.findById(dto.getDuiCliente())
-                .orElseThrow(() -> new EntityNotFoundException("No existe Cliente con DUI: " + dto.getDuiCliente()));
+        try {
+            // Validaciones rápidas para evitar "The given id must not be null"
+            if (dto == null) throw new IllegalArgumentException("El cuerpo (dto) es obligatorio");
+            if (dto.getDuiCliente() == null || dto.getDuiCliente().isBlank())
+                throw new IllegalArgumentException("duiCliente es obligatorio");
+            if (dto.getDuiEmpleado() == null || dto.getDuiEmpleado().isBlank())
+                throw new IllegalArgumentException("duiEmpleado es obligatorio");
 
-        EmpleadoEntities empleado = empleadoRepo.findById(dto.getDuiEmpleado())
-                .orElseThrow(() -> new EntityNotFoundException("No existe Empleado con DUI: " + dto.getDuiEmpleado()));
+            // FKs
+            ClienteEntities cliente = clienteRepo.findById(dto.getDuiCliente())
+                    .orElseThrow(() -> new EntityNotFoundException("No existe Cliente con DUI: " + dto.getDuiCliente()));
+            EmpleadoEntities empleado = empleadoRepo.findById(dto.getDuiEmpleado())
+                    .orElseThrow(() -> new EntityNotFoundException("No existe Empleado con DUI: " + dto.getDuiEmpleado()));
 
-        ChatEntities e = new ChatEntities();
-        e.setIdChat(null); // asegurar inserción (si usas secuencia)
-        e.setCliente(cliente);
-        e.setEmpleado(empleado);
-        // Si dto.getFechaInicio() es null, dejamos que la DB aplique DEFAULT CURRENT_TIMESTAMP
-        if (dto.getFechaInicio() != null) e.setFechaInicio(dto.getFechaInicio());
-        e.setEstado(dto.getEstado());
-        e.setUltimoMensaje(dto.getUltimoMensaje());
+            // Mapear entidad
+            ChatEntities nuevo = new ChatEntities();
+            nuevo.setIdChat(null); // fuerza INSERT con secuencia
+            nuevo.setCliente(cliente);
+            nuevo.setEmpleado(empleado);
+            nuevo.setEstado(dto.getEstado()); // puede ser null si tu lógica lo permite
 
-        e = chatRepo.save(e);
-        return toDTO(e);
+            // Si querés respetar el DEFAULT CURRENT_TIMESTAMP de la DB, no seteés cuando venga null
+            if (dto.getFechaInicio() != null) {
+                nuevo.setFechaInicio(dto.getFechaInicio());
+            }
+            nuevo.setUltimoMensaje(dto.getUltimoMensaje()); // puede ser null
+
+            // Guardar
+            ChatEntities guardado = chatRepo.save(nuevo);
+
+            // Devolver lo persistido en formato DTO
+            return toDTO(guardado);
+        } catch (EntityNotFoundException | IllegalArgumentException ex) {
+            // Re-lanza excepciones "esperadas" para que el controller las traduzca a 400/404
+            throw ex;
+        } catch (Exception e) {
+            // Logueá y envolvé para no devolver null silencioso
+            log.error("Error registrando chat", e);
+            throw new RuntimeException("No se pudo registrar el chat", e);
+        }
     }
 
     // ACTUALIZAR

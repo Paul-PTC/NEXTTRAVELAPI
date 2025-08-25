@@ -19,6 +19,12 @@ import java.time.LocalTime;
 @EqualsAndHashCode
 public class ItinerarioEmpleadoEntities {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ITINERARIOEMP")
+    @SequenceGenerator(
+            name = "SEQ_ITINERARIOEMP",          // nombre del generador interno en JPA
+            sequenceName = "SEQ_ITINERARIOEMP",  // nombre REAL de la secuencia en la BD
+            allocationSize = 1                  // debe coincidir con INCREMENT BY 1
+    )
     @Column(name = "IDITINERARIO")
     private Long idItinerario;
 

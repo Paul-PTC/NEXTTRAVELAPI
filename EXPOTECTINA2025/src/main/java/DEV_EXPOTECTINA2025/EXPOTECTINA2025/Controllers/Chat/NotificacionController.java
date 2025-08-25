@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NotificacionController {
 
-    private NotificacionService notificacionService;
+    private final NotificacionService notificacionService;
 
     // GET: listar todas las notificaciones
     @GetMapping("/notificaciones")

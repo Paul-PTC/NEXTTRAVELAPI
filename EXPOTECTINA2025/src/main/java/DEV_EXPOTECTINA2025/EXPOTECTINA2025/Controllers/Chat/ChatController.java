@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private ChatService chatService;
+    private final ChatService chatService;
 
     // GET: listar todos los chats
     @GetMapping("/chats")
@@ -46,23 +46,58 @@ public class ChatController {
         }
     }
 
-    // POST: crear chat
+    // POST: insertar chat (estilo Map como TipoMantenimiento)
     @PostMapping("/insertar")
-    public ResponseEntity<?> registrar(@Valid @RequestBody ChatDTO dto, BindingResult result) {
+    public ResponseEntity<Map<String, Object>> registrar(
+            @Valid @RequestBody ChatDTO dto,
+            BindingResult result) {
+
+        // Validación de campos (Bean Validation)
         if (result.hasErrors()) {
-            Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(err -> errores.put(err.getField(), err.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errores);
+            Map<String, String> fieldErrors = new HashMap<>();
+            result.getFieldErrors().forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "Insercion Incorrecta",
+                    "errorType", "VALIDATION_ERROR",
+                    "message", "Datos para insercion invalidos",
+                    "errors", fieldErrors
+            ));
         }
+
         try {
-            ChatDTO creado = chatService.registrar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-        } catch (Exception e) {
-            log.error("Error al registrar chat: {}", e.getMessage());
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al registrar chat", "detalle", e.getMessage()));
+            ChatDTO res = chatService.registrar(dto);  // crea y devuelve el DTO persistido
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "status", "success",
+                    "data", res
+            ));
+        }
+        // Cuando no existen las FKs (Cliente/Empleado)
+        catch (jakarta.persistence.EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", "error",
+                    "errorType", "NOT_FOUND",
+                    "message", ex.getMessage()
+            ));
+        }
+        // Cuando vienen DUIs vacíos o nulos (guard clausule del service)
+        catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "Insercion Incorrecta",
+                    "errorType", "VALIDATION_ERROR",
+                    "message", ex.getMessage()
+            ));
+        }
+        // Cualquier otro error inesperado
+        catch (Exception e) {
+            log.error("Error al registrar chat", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "error",
+                    "message", "Error al registrar el chat",
+                    "detail", e.getMessage()
+            ));
         }
     }
+
 
     // PUT: actualizar chat
     @PutMapping("/actualizar/{id}")

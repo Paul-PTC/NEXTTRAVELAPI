@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MensajeController {
 
-    private MensajeService mensajeService;
+    private final MensajeService mensajeService;
 
     // GET: listar todos los mensajes
     @GetMapping("/mensajes")

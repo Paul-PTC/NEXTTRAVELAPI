@@ -21,13 +21,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CodigoVerificacionController {
 
-    private CodigoVerificacionService codigoService;
+    private final CodigoVerificacionService codigoService;
 
     // GET: listar todos
     @GetMapping("/codigos")
     public ResponseEntity<List<CodigoVerificacionDTO>> listar() {
-        return ResponseEntity.ok(codigoService.obtenerTodos());
+        List<CodigoVerificacionDTO> codigos = codigoService.obtenerTodos();
+        return ResponseEntity.ok(codigos);
     }
+
 
     // GET: obtener por ID
     @GetMapping("/codigos/{id}")

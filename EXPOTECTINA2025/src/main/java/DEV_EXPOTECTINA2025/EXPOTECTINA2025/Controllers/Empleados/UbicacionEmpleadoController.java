@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,12 +24,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UbicacionEmpleadoController {
 
-    private UbicacionEmpleadoService ubicacionService;
+    @Autowired
+    private final UbicacionEmpleadoService ubicacionService;
 
-    // listar
     @GetMapping("/ubicaciones")
     public ResponseEntity<List<UbicacionEmpleadoDTO>> listar() {
-        List<UbicacionEmpleadoDTO> lista = ubicacionService.listar();
+        List<UbicacionEmpleadoDTO> lista = ubicacionService.getAll();
         return ResponseEntity.ok(lista);
     }
 
