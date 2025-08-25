@@ -23,8 +23,8 @@ public class EntitesPago {
     private Long idPago;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA")
-    private Long idReserva;
+    @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA", nullable = false)
+    private ReservaEntities reserva;
 
     @Column(name = "MONTO")
     private float Monto;

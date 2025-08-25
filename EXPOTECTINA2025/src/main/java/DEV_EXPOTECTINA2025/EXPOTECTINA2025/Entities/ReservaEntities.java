@@ -43,7 +43,7 @@ public class ReservaEntities {
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadoViajeEntities> estadosViaje = new ArrayList<>();
 
-    @OneToMany(mappedBy = "idreserva", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EntitesPago> reserva = new ArrayList<>();
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EntitesPago> pagos = new ArrayList<>();
 }
 
