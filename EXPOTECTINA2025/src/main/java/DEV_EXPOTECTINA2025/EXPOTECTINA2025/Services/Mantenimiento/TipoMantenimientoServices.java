@@ -39,44 +39,31 @@ public class TipoMantenimientoServices {
         return null;
     }
 
-    public TipoMantenimientoDTO actualizarTipoMantenimientos (Long idTipoMantenimiento, TipoMantenimientoDTO tipoMantenimientoDTO){
-        //Verificamos existencia
-        TipoMantenimietoEntities TipoManteniminetoExiste = rep.findById(Long.valueOf(idTipoMantenimiento)).orElseThrow(()-> new ExceptionsTipoMantenimientoNoEncontrado("Tipo de mantenimiento no encontrado"));
+    public TipoMantenimientoDTO actualizarTipoMantenimiento(Long id, TipoMantenimientoDTO dto) throws ExceptionsTipoMantenimientoNoEncontrado {
+        // Buscar la entidad existente por ID
+        TipoMantenimietoEntities existente = rep.findById(id)
+                .orElseThrow(() -> new ExceptionsTipoMantenimientoNoEncontrado("No se encontró el tipo de mantenimiento con id: " + id));
 
-        TipoManteniminetoExiste.setIdTipoMantenimiento(tipoMantenimientoDTO.getIdTipoMantenimiento());
-        TipoManteniminetoExiste.setDescripcion(tipoMantenimientoDTO.getDescripcion());
-        TipoManteniminetoExiste.setNombreTipo(tipoMantenimientoDTO.getNombreTipo());
+        // Actualizar campos (sin modificar ID)
+        existente.setNombreTipo(dto.getNombreTipo());
+        existente.setDescripcion(dto.getDescripcion());
+        // Actualiza otros campos si tienes más en el DTO
 
-        //Guardamos Cambios
-        TipoMantenimietoEntities TipoMantenimientoActualizar = rep.save(TipoManteniminetoExiste);
+        // Guardar cambios
+        TipoMantenimietoEntities actualizado = rep.save(existente);
 
-        //Convertimos a DTO
-        return convertirATipoMantenimientosDTO(TipoMantenimientoActualizar);
+        // Convertir a DTO y devolver
+        return convertirA_DTO(actualizado);
     }
 
-    public TipoMantenimientoDTO actualizarTipoMantenimiento(Long idTipoMantenimiento, TipoMantenimientoDTO tipoMantenimientoDTO) {
-        // Verificamos existencia
-        TipoMantenimietoEntities tipoMantenimientoExiste = rep.findById(idTipoMantenimiento)
-                .orElseThrow(() -> new ExceptionsTipoMantenimientoNoEncontrado("Tipo de mantenimiento no encontrado con ID: " + idTipoMantenimiento));
-
-        // Solo actualiza los campos que vienen no nulos en el DTO
-        if (tipoMantenimientoDTO.getIdTipoMantenimiento() != null) {
-            tipoMantenimientoExiste.setIdTipoMantenimiento(tipoMantenimientoDTO.getIdTipoMantenimiento());
-        }
-
-        if (tipoMantenimientoDTO.getDescripcion() != null) {
-            tipoMantenimientoExiste.setDescripcion(tipoMantenimientoDTO.getDescripcion());
-        }
-
-        if (tipoMantenimientoDTO.getNombreTipo() != null) {
-            tipoMantenimientoExiste.setNombreTipo(tipoMantenimientoDTO.getNombreTipo());
-        }
-
-        // Guardamos los cambios
-        TipoMantenimietoEntities tipoMantenimientoActualizado = rep.save(tipoMantenimientoExiste);
-
-        // Convertimos a DTO
-        return convertirATipoMantenimientosDTO(tipoMantenimientoActualizado);
+    // Método para convertir entidad a DTO
+    private TipoMantenimientoDTO convertirA_DTO(TipoMantenimietoEntities entidad) {
+        TipoMantenimientoDTO dto = new TipoMantenimientoDTO();
+        dto.setIdTipoMantenimiento(entidad.getIdTipoMantenimiento());
+        dto.setNombreTipo(entidad.getNombreTipo());
+        dto.setDescripcion(entidad.getDescripcion());
+        // Mapear otros campos si hay
+        return dto;
     }
 
 

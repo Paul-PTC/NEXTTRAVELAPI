@@ -56,39 +56,13 @@ public class TipoMantenimientoController {
         }
     }
 
-    @PutMapping("/EditarTipodeMantenimiento/{idTipoMantenimiento}")
-    public ResponseEntity<?>EditarTipodeMantenimiento(
-            @PathVariable Long idTipoMantenimiento,
-            @Valid @RequestBody TipoMantenimientoDTO mantenimientoDTO,
-            BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            Map<String,Long> errores = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error ->
-                    errores.put(error.getField(), Long.valueOf(error.getDefaultMessage())));
-            return ResponseEntity.badRequest().body(errores);
-        }
-        try {
-            TipoMantenimientoDTO TipoMantenimientoDTO = new TipoMantenimientoDTO();
-            TipoMantenimientoDTO TipoMantenimientoActualizado =
-                    servicio.actualizarTipoMantenimientos(idTipoMantenimiento, TipoMantenimientoDTO);
-            return ResponseEntity.ok(TipoMantenimientoActualizado);
-        }
-        catch (ExceptionsTipoMantenimientoNoEncontrado e){
-            return ResponseEntity.notFound().build();
-        }
-        catch (ExcepcionDatosDuplicados e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
-            );
-        }
-    }
-
-    @PatchMapping("/ActualizarTipoMantenimiento/{idTipoMantenimiento}")
+    @PutMapping("/ActualizarTipoMantenimiento/{idTipoMantenimiento}")
     public ResponseEntity<?> actualizarTipoMantenimientoParcial(
             @PathVariable Long idTipoMantenimiento,
             @RequestBody TipoMantenimientoDTO tipoMantenimientoDTO) {
 
         try {
+            // No necesitas setear el ID en el DTO aquí, el servicio usa el PathVariable
             TipoMantenimientoDTO actualizado = servicio.actualizarTipoMantenimiento(idTipoMantenimiento, tipoMantenimientoDTO);
             return ResponseEntity.ok(actualizado);
 
@@ -101,7 +75,8 @@ public class TipoMantenimientoController {
                     .body(Map.of("error", "Error al actualizar el tipo de mantenimiento", "detalle", e.getMessage()));
         }
     }
-    @DeleteMapping("/EliminarTipoMantenimiento/{idTipoMantenimineto}")
+
+    @DeleteMapping("/{idTipoMantenimineto}")
     public ResponseEntity <Map<String,Object>> EliminarTipoMantenimiento(@PathVariable Long idTipoMantenimineto){
         try{
             if (!servicio.EliminarTipoMantenimineto(idTipoMantenimineto)){

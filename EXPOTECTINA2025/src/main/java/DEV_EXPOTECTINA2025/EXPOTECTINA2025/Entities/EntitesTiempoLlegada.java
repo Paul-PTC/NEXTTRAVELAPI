@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @ToString
 @EqualsAndHashCode
@@ -16,12 +16,11 @@ import java.util.Date;
 @Entity
 public class EntitesTiempoLlegada {
 
-    //SEQ_TIEMPOESTIMADO
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TIEMPOESTIMADO")
     @SequenceGenerator(name = "SEQ_TIEMPOESTIMADO", sequenceName = "SEQ_TIEMPOESTIMADO", allocationSize = 1)
     @Column(name = "IDTIEMPOESTIMADO")
-    private Long idTiempoestimado;
+    private Long idTiempoEstimado;
 
     @Column(name = "IDRUTA")
     private Long idRuta;
@@ -30,8 +29,8 @@ public class EntitesTiempoLlegada {
     private Long idReserva;
 
     @Column(name = "TIEMPOESTIMADOMINUTOS")
-    private Long tiempoEstimado; //Nos quedamos con Long o con Float?
+    private Long tiempoEstimado; // puedes usar Long o Float según el nivel de precisión que necesites
 
     @Column(name = "FECHAHORACALCULO")
-    private Date fechahoraCalculo;
+    private LocalDateTime FechaHoraCalculo;
 }

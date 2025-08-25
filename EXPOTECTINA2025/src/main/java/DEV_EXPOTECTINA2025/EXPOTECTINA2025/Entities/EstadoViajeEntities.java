@@ -9,7 +9,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "EstadoViaje")
+@Table(name = "ESTADOVIAJE")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,22 +18,23 @@ import java.time.LocalDateTime;
 public class EstadoViajeEntities {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idEstadoViaje")
+    @SequenceGenerator(name = "SEQ_ESTADOVIAJE", sequenceName = "SEQ_ESTADOVIAJE", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ESTADOVIAJE")
+    @Column(name = "IDESTADOVIAJE")
     private Long idEstadoViaje;
 
-    @Column(name = "estado", nullable = false, length = 50)
+    @Column(name = "ESTADO", nullable = false, length = 50)
     private String estado;
 
-    @Column(name = "fechaEstado", nullable = false)
+    @Column(name = "FECHAESTADO", nullable = false)
     private LocalDateTime fechaEstado;
 
-    @Column(name = "observacion", length = 200)
+    @Column(name = "OBSERVACION", length = 200)
     private String observacion;
 
     // Relación con Reserva (ManyToOne)
     @ManyToOne
-    @JoinColumn(name = "idReserva", nullable = false,
+    @JoinColumn(name = "idreserva", nullable = false,
             foreignKey = @ForeignKey(name = "fk_estadoviaje_reserva"))
     private ReservaEntities reserva;
 }

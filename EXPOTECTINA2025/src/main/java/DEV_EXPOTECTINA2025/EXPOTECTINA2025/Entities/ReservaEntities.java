@@ -13,8 +13,9 @@ import java.util.List;
 @Getter @Setter
 public class ReservaEntities {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_reserva")
+    @SequenceGenerator(name = "seq_reserva", sequenceName = "SEQ_RESERVA", allocationSize = 1)
     @Column(name = "IDRESERVA")
-
     private Long id;
 
     @ManyToOne(optional = false)

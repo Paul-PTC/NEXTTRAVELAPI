@@ -20,8 +20,9 @@ public class DetallePagoEntities {
     @Column(name = "IDDETALLEPAGO")
     private long idDetallePago;
 
-    @Column(name = "IDPAGO")
-    private long idPago;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDPAGO")  // Debe coincidir con el nombre de la columna FK en la tabla detallepago
+    private EntitesPago pago;
 
     @Column(name = "METODO")
     private String metodo;

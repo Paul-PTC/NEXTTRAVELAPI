@@ -1,9 +1,8 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.TiempoEstiamdoLlegada;
 
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EntitesPago;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EntitesTiempoLlegada;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmpleadoNoEncontrado;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPago;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TiempoEstimadoLlegadaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TiempoLlegadaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.TiempoEstimadoRepo;
 import jakarta.validation.Valid;
@@ -19,57 +18,67 @@ public class TiempoLlegadaService {
     @Autowired
     private TiempoEstimadoRepo repo;
 
-    public List<TiempoLlegadaDTO> getAllTiempos() {
-        List<EntitesTiempoLlegada> ItiEmp = repo.findAll();
-        return ItiEmp.stream()
+    public List<TiempoEstimadoLlegadaDTO> getAllTiemposLlegada() {
+        List<EntitesTiempoLlegada> tiempos = repo.findAll();
+        return tiempos.stream()
                 .map(this::convertirATiempoLlegadaDTO)
                 .collect(Collectors.toList());
     }
 
-    private TiempoLlegadaDTO convertirATiempoLlegadaDTO(EntitesTiempoLlegada tiempo) {
-        TiempoLlegadaDTO dtoTiempo = new TiempoLlegadaDTO();
-        dtoTiempo.setIdTiempoestimado(tiempo.getIdTiempoestimado());
-        dtoTiempo.setIdRuta(tiempo.getIdRuta());
-        dtoTiempo.setIdReserva(tiempo.getIdReserva());
-        dtoTiempo.setTiempoEstimado(tiempo.getTiempoEstimado());
-        dtoTiempo.setFechahoraCalculo(tiempo.getFechahoraCalculo());
 
-        return dtoTiempo;
-    }
-
-
-    public TiempoLlegadaDTO InsertarTiempoLlegada(@Valid TiempoLlegadaDTO tiempo) {
+    public TiempoEstimadoLlegadaDTO InsertarTiempoLlegada(@Valid TiempoLlegadaDTO dto) {
         try {
-            EntitesTiempoLlegada insertTiempo = new EntitesTiempoLlegada();
-                //Paul aqui nose como seria, por favor ayudame
-            insertTiempo.setTiempoEstimado(tiempo.getTiempoEstimado());
-            insertTiempo.setFechahoraCalculo(tiempo.getFechahoraCalculo());
-
-            repo.save(insertTiempo);
-            return tiempo;
+            EntitesTiempoLlegada entidad = convertirAEntidad(dto);
+            EntitesTiempoLlegada guardado = repo.save(entidad);
+            return convertirATiempoLlegadaDTO(guardado);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
 
-    public TiempoLlegadaDTO ActualizarTiempoLLegada(Long idtiempo, TiempoLlegadaDTO tiempollegada)
+    public TiempoEstimadoLlegadaDTO ActualizarTiempoLLegada(Long idTiempo, TiempoEstimadoLlegadaDTO tiempoLlegadaDTO)
             throws ExceptionsItinerarioEmpleadoNoEncontrado {
 
-        EntitesTiempoLlegada time = repo.findById(idtiempo).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Tiempo Llegada no encontrado con ID: " + idtiempo));
-        time.setTiempoEstimado(tiempollegada.getTiempoEstimado());
-        time.setFechahoraCalculo(tiempollegada.getFechahoraCalculo());
+        EntitesTiempoLlegada entidad = repo.findById(idTiempo)
+                .orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Tiempo Llegada no encontrado con ID: " + idTiempo));
 
+        entidad.setIdRuta(tiempoLlegadaDTO.getIdRuta());
+        entidad.setIdReserva(tiempoLlegadaDTO.getIdReserva());
+        entidad.setTiempoEstimado(tiempoLlegadaDTO.getTiempoEstimado() != null ? tiempoLlegadaDTO.getTiempoEstimado().longValue() : null);
+        entidad.setFechaHoraCalculo(tiempoLlegadaDTO.getFechaHoraCalculo());
 
-        EntitesTiempoLlegada TiempoLLegada = repo.save(time);
-        return convertirATiempoLlegadaDTO(TiempoLLegada);
+        EntitesTiempoLlegada actualizado = repo.save(entidad);
+        return convertirATiempoLlegadaDTO(actualizado);
     }
 
 
-    public boolean EliminarTiempoLlegada(Long idtiempo) {
-        if (!repo.existsById(idtiempo)) return false;
-        repo.deleteById(idtiempo);
+
+    public boolean eliminar(Long idTiempo) {
+        if (!repo.existsById(idTiempo)) return false;
+        repo.deleteById(idTiempo);
         return true;
     }
 
+    private EntitesTiempoLlegada convertirAEntidad(@Valid TiempoLlegadaDTO dto) {
+        EntitesTiempoLlegada entidad = new EntitesTiempoLlegada();
+        entidad.setIdRuta(dto.getIdRuta());
+        entidad.setIdReserva(dto.getIdReserva());
+        entidad.setTiempoEstimado(dto.getTiempoEstimado() != null ? dto.getTiempoEstimado().longValue() : null);
+        entidad.setFechaHoraCalculo(dto.getFechaHoraCalculo());
+        return entidad;
+    }
+
+    // Conversión Entidad -> DTO
+    private TiempoEstimadoLlegadaDTO convertirATiempoLlegadaDTO(EntitesTiempoLlegada entidad) {
+        TiempoEstimadoLlegadaDTO dto = new TiempoEstimadoLlegadaDTO();
+        dto.setIdTiempoestimado(entidad.getIdTiempoEstimado());
+        dto.setIdRuta(entidad.getIdRuta());
+        dto.setIdReserva(entidad.getIdReserva());
+        dto.setTiempoEstimado(entidad.getTiempoEstimado() != null ? entidad.getTiempoEstimado().intValue() : null);
+        dto.setFechaHoraCalculo(entidad.getFechaHoraCalculo());
+        return dto;
+    }
+  
 
 }

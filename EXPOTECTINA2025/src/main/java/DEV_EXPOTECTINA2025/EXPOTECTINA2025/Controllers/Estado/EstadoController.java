@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/estados")
+@RequestMapping("/apiEstados")
 public class EstadoController {
     @Autowired
     private EstadoServices estadoServices;
 
 
-    @GetMapping("obtenerEstado")
+    @GetMapping("/obtenerEstado")
     public ResponseEntity<List<EstadoDTO>> obtenerTodos() {
         return ResponseEntity.ok(estadoServices.obtenerTodosEstados());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("ObtenerId/{id}")
     public ResponseEntity<EstadoDTO> obtenerPorId(@PathVariable Integer id) {
         EstadoDTO dto = estadoServices.obtenerEstadoPorId(id);
         if (dto == null) {
@@ -35,7 +35,7 @@ public class EstadoController {
         return ResponseEntity.ok(creado);
     }
 
-    @PutMapping("ActualizaEstado/{id}")
+    @PutMapping("ActualizarEstado/{id}")
     public ResponseEntity<EstadoDTO> actualizar(@PathVariable Integer id, @RequestBody EstadoDTO dto) {
         try {
             EstadoDTO actualizado = estadoServices.actualizarEstado(id, dto);

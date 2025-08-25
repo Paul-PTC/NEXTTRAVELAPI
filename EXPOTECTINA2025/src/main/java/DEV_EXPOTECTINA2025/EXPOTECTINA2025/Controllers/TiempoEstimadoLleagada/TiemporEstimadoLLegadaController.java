@@ -4,6 +4,7 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.TiempoEstimadoLleagada;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExcepcionDatosDuplicados;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmpleadoNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPago;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TiempoEstimadoLlegadaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.TiempoLlegadaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.TiempoEstiamdoLlegada.TiempoLlegadaService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public class TiemporEstimadoLLegadaController {
     public ResponseEntity<Map<String, Object>> RegistrarTiempoLlegada(@Valid @RequestBody TiempoLlegadaDTO tiempo, HttpServletRequest request) {
         try {
             //Guardar ItinerarioEmpleados
-            TiempoLlegadaDTO res = services.InsertarTiempoLlegada(tiempo);
+            TiempoEstimadoLlegadaDTO res = services.InsertarTiempoLlegada(tiempo);
             if (res == null) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", "Insercion Incorrecta",
@@ -70,7 +71,7 @@ public class TiemporEstimadoLLegadaController {
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            TiempoLlegadaDTO Actualizar = services.ActualizarTiempoLLegada(idtiempo, dtoTiempo);
+            TiempoLlegadaDTO Actualizar = services.ActualizarTiempoLLegada(idtiempo, TiempoEstimadoLlegadaDTO);
             return ResponseEntity.ok(Actualizar);
         } catch (ExceptionsItinerarioEmpleadoNoEncontrado e) {
             return ResponseEntity.notFound().build();

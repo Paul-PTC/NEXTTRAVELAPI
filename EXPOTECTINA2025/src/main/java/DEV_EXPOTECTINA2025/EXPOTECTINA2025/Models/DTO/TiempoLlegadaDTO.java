@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @ToString
@@ -23,6 +24,6 @@ public class TiempoLlegadaDTO {
     @NotNull(message = "El Tiempo es obligatorio")
     private Long tiempoEstimado;
     @NotNull(message = "la Fecha  es obligatorio")
-    private Date fechahoraCalculo;
+    private LocalDateTime FechaHoraCalculo;
 
 }

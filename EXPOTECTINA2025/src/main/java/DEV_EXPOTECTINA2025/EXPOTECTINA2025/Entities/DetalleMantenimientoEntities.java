@@ -16,7 +16,7 @@ import lombok.ToString;
 public class DetalleMantenimientoEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "detalle_mantenimiento_seq")
-    @SequenceGenerator(name = "detalle_mantenimiento_seq", sequenceName = "SEQ_DETALLE_MANTENIMIENTO", allocationSize = 1)
+    @SequenceGenerator(name = "detalle_mantenimiento_seq", sequenceName = "SEQ_DETALLEMANTENIMIENTO", allocationSize = 1)
     @Column(name = "IDDETALLEMANTENIMIENTO")
     private Integer idDetalleMantenimiento;
 

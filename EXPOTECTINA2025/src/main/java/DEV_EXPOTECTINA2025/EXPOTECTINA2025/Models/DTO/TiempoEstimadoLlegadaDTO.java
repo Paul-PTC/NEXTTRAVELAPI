@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class TiempoEstimadoLlegadaDTO {
 
-    private Long idTiempoEstimado;
+    private Long idTiempoestimado;
 
     @NotNull(message = "El id de la ruta es obligatorio")
     private Long idRuta;
@@ -22,9 +22,16 @@ public class TiempoEstimadoLlegadaDTO {
     private Long idReserva;
 
     @NotNull(message = "El tiempo estimado en minutos es obligatorio")
-    @Min(value = 0, message = "El tiempo estimado no puede ser negativo")
-    private Integer tiempoEstimadoMinutos;
+    private Integer tiempoEstimado;
 
-    @NotNull(message = "La fecha/hora de cálculo es obligatoria")
+    @NotNull(message = "La Fecha es obligatorio")
     private LocalDateTime fechaHoraCalculo;
+
+    public LocalDateTime getFechaHoraCalculo() {
+        return fechaHoraCalculo;
+    }
+
+    public void setFechaHoraCalculo(LocalDateTime fechaHoraCalculo) {
+        this.fechaHoraCalculo = fechaHoraCalculo;
+    }
 }

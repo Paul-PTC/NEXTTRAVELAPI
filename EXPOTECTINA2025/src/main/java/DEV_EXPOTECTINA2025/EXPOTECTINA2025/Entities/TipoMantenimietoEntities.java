@@ -1,9 +1,6 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +15,9 @@ import org.hibernate.annotations.CollectionId;
 @EqualsAndHashCode
 public class TipoMantenimietoEntities {
     @Id
-    @Column( name = "IDTIPOMANTENIMIENTO")
+    @SequenceGenerator(name = "seq_tipo_mantenimiento", sequenceName = "SEQ_TIPOMANTENIMIENTO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tipo_mantenimiento")
+    @Column(name = "IDTIPOMANTENIMIENTO")
     private Long idTipoMantenimiento;
 
     @Column(name= "NOMBRETIPO")

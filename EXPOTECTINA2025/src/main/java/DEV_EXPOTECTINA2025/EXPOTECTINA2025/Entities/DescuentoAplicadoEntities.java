@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.xml.transform.sax.SAXResult;
 import java.sql.Date;
 
 @Entity
@@ -23,11 +22,13 @@ public class DescuentoAplicadoEntities {
     @Column(name = "IDDESCUENTO")
     private Long idDescuento;
 
-    @Column(name = "IDRESERVA")
-    private Long idReserva;
+    @ManyToOne
+    @JoinColumn(name = "IDRESERVA", nullable = false)
+    private ReservaEntities reserva;
 
-    @Column(name = "IDPROMOCION")
-    private Long idPromocion;
+    @ManyToOne
+    @JoinColumn(name = "IDPROMOCION", nullable = false)
+    private PromocionEntities promocion;
 
     @Column(name = "MONTODESCONTADO")
     private String montoDescontado;

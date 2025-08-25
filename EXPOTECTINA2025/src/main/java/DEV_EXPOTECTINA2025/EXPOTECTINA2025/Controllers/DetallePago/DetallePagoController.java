@@ -27,7 +27,7 @@ public class DetallePagoController {
     @Autowired
     private DetallePagoService services;
 
-    @GetMapping
+    @GetMapping("/DetallesPago")
     public ResponseEntity<List<DetallePagoDTO>> ObtenerDetallesPagos() {
         return ResponseEntity.ok(services.getAllDetallesPago());
     }
@@ -36,7 +36,7 @@ public class DetallePagoController {
     public ResponseEntity<Map<String,Object>>InsertarDetallesPagos(@Valid @RequestBody DetallePagoDTO detalleDTO, HttpServletRequest request) {
         //Porceso para guardar datos
         try {
-            DetallePagoDTO res = services.InsertarDetallePagos(detalleDTO);
+            DetallePagoDTO res = services.insertarDetallePagos(detalleDTO);
             if (res == null) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", "Insercion Incorrecta",
@@ -58,7 +58,7 @@ public class DetallePagoController {
         }
     }
 
-    @PutMapping("/EditarTipodeMantenimiento/{idDetallePago}")
+    @PutMapping("/EditarDetallesPago/{idDetallePago}")
     public ResponseEntity<?>EditarDetallepago(
             @PathVariable Long idDetallePago,
             @Valid @RequestBody DetallePagoDTO detalleDTO,

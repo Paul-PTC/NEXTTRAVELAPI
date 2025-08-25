@@ -33,7 +33,7 @@ public class DescuentoAplicadoController {
     public ResponseEntity<Map<String, Object>> RegistrarDescuentos(@Valid @RequestBody DescuentoAplicadoDTO descuento, HttpServletRequest request){
         try {
             //Intentamos guardar empleados
-            DescuentoAplicadoDTO respuesta = services.InsertarDescuentoAplicado(descuento);
+            DescuentoAplicadoDTO respuesta = services.insertarDescuentoAplicado(descuento);
             if (respuesta == null){
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", "Inserción incorrecta",
@@ -68,7 +68,7 @@ public class DescuentoAplicadoController {
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            DescuentoAplicadoDTO Descuentoactualizado = services.actualizarEmpleados(idDescuento, descuentoDTO);
+            DescuentoAplicadoDTO Descuentoactualizado = services.actualizarDescuentoAplicado(idDescuento, descuentoDTO);
             return ResponseEntity.ok(Descuentoactualizado);
         }
         catch (ExceptionsUsuarioNoEncontrado e){
