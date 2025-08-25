@@ -2,13 +2,11 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.HoraPorViaje;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.*;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsHorasPorViajeNoEncontrado;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmpleadoNoEncontrado;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.HorasPorViajeDTO;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ItinerarioEmpleadoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.HorasPorViajeRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RutaRepository;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.VehiculoRepository;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.VehiculosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,7 @@ public class HoraPorViajeServices {
     @Autowired
     private RutaRepository RutRepo;
     @Autowired
-    private VehiculoRepository vehiculoRepository;
+    private VehiculosRepository vehiculoRepository;
 
     public List<HorasPorViajeDTO> getAllHorasPorViaje() {
         List<HorasPorViajeEntities> datos = repo.findAll();

@@ -6,22 +6,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "VEHICULO")
+@Table(
+        name = "VEHICULO",
+        uniqueConstraints = @UniqueConstraint(name = "uq_vehiculo_placa", columnNames = "PLACA")
+)
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 public class VehiculosEntities {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_Vehiculo")
-    @SequenceGenerator(name = "seq_Vehiculo", sequenceName = "seq_Vehiculo", allocationSize = 1)
-    @Column(name = "IDVEHICULO")
-    private Integer idVehiculo;
 
-    @Column(name = "PLACA", length = 10, nullable = false, unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_vehiculo")
+    @SequenceGenerator(name = "seq_vehiculo", sequenceName = "SEQ_VEHICULO", allocationSize = 1)
+    @Column(name = "IDVEHICULO")
+    private Long idVehiculo;
+
+    @Column(name = "PLACA", nullable = false, length = 10, unique = true)
     private String placa;
 
     @Column(name = "MARCA", length = 50)
@@ -34,15 +38,11 @@ public class VehiculosEntities {
     private Integer anio;
 
     @Column(name = "FECHAVENCIMIENTOCIRCULACION")
-    @Temporal(TemporalType.DATE)
-    private Date fechaVencimientoCirculacion;
+    private LocalDate fechaVencimientoCirculacion;
 
     @Column(name = "FECHAVENCIMIENTOSEGURO")
-    @Temporal(TemporalType.DATE)
-    private Date fechaVencimientoSeguro;
+    private LocalDate fechaVencimientoSeguro;
 
     @Column(name = "FECHAVENCIMIENTOREVISION")
-    @Temporal(TemporalType.DATE)
-    private Date fechaVencimientoRevision;
-
+    private LocalDate fechaVencimientoRevision;
 }

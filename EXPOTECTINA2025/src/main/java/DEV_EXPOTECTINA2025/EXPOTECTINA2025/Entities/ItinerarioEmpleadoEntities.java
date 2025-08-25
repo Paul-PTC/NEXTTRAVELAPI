@@ -18,27 +18,24 @@ import java.time.LocalTime;
 @ToString
 @EqualsAndHashCode
 public class ItinerarioEmpleadoEntities {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ITINERARIOEMP")
-    @SequenceGenerator(
-            name = "SEQ_ITINERARIOEMP",          // nombre del generador interno en JPA
-            sequenceName = "SEQ_ITINERARIOEMP",  // nombre REAL de la secuencia en la BD
-            allocationSize = 1                  // debe coincidir con INCREMENT BY 1
-    )
+    @SequenceGenerator(name = "SEQ_ITINERARIOEMP", sequenceName = "SEQ_ITINERARIOEMP", allocationSize = 1)
     @Column(name = "IDITINERARIO")
     private Long idItinerario;
 
-    @ManyToOne
-    @JoinColumn(name = "DUIEMPLEADO", referencedColumnName = "DUIEMPLEADO")
-    public EmpleadoEntities duiEmpleado;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "DUIEMPLEADO", referencedColumnName = "DUIEMPLEADO", nullable = false)
+    private EmpleadoEntities empleado;
 
-    @ManyToOne
-    @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO", nullable = false)
     private VehiculosEntities vehiculo;
 
-    @ManyToOne
-    @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA")
-    private RutaEntities idRuta;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA", nullable = false)
+    private RutaEntities ruta;
 
     @Column(name = "FECHA")
     private LocalDate fecha;
@@ -47,8 +44,8 @@ public class ItinerarioEmpleadoEntities {
     private LocalTime horaInicio;
 
     @Column(name = "HORAFIN")
-    private  LocalTime horaFin;
+    private LocalTime horaFin;
 
-    @Column(name = "OBSERVACIONES")
-    private String Observaciones;
+    @Column(name = "OBSERVACIONES", length = 200)
+    private String observaciones;
 }

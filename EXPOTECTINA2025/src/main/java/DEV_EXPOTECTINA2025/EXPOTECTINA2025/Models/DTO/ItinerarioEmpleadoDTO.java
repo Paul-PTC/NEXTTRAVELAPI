@@ -3,43 +3,36 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@ToString
-@EqualsAndHashCode
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ItinerarioEmpleadoDTO {
 
-    @NotNull(message = "El ID de Itinerario es obligatorio")
     private Long idItinerario;
 
-    @NotBlank(message = "El DUI es obligatorio")
+    @NotBlank(message = "El DUI del empleado es obligatorio")
+    @Size(max = 10, message = "El DUI no puede superar los 10 caracteres")
     private String duiEmpleado;
 
-    @NotNull(message = "El ID de vehiculo es obligatorio")
+    @NotNull(message = "El id del vehículo es obligatorio")
     private Long idVehiculo;
 
-    @NotNull(message = "El ID de ruta es obligatorio")
+    @NotNull(message = "El id de la ruta es obligatorio")
     private Long idRuta;
 
-
-    @NotBlank(message = "La fecha es obligatorio")
     private LocalDate fecha;
-
-    @NotBlank(message = "La hora de inicio es obligatorio")
     private LocalTime horaInicio;
-
-    @NotBlank(message = "La hora de finalizacion es obligatorio")
     private LocalTime horaFin;
 
-    @NotBlank(message = "La observacion es obligatoria")
-    private String Observaciones;
+    @Size(max = 200, message = "Las observaciones no pueden superar los 200 caracteres")
+    private String observaciones;
 }
