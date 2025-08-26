@@ -1,108 +1,110 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Reserva;
 
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ClienteEntities;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EmpleadoEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.ReservaEntities;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.RutaEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ReservaDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.EmpleadoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RutaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ReservaServices {
-    @Autowired
-    private ReservaRepository reservaRepository;
-    @Autowired
-    private EmpleadoRepository EmpleadoRepository;
-    @Autowired
-    private RutaRepository RutaRepository;
 
-    // Listar todos (devuelve DTOs)
-    public List<ReservaDTO> obtenerTodasLasReservas() {
-        List<ReservaEntities> entities = reservaRepository.findAll();
-        return entities.stream()
-                .map(this::convertirAReservaDTO)
+    private final ReservaRepository reservaRepo;
+    private final EmpleadoRepository empleadoRepo;
+    private final RutaRepository rutaRepo;
+
+    // listar
+    public List<ReservaDTO> listar() {
+        return reservaRepo.findAll()
+                .stream()
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // Obtener por Id
-    public Optional<ReservaDTO> obtenerReservaPorId(Long id) {
-        return reservaRepository.findById(id)
-                .map(this::convertirAReservaDTO);
+    // obtener por id
+    public Optional<ReservaDTO> obtenerPorId(Long id) {
+        return reservaRepo.findById(id).map(this::toDTO);
     }
 
-    // Insertar
-    public ReservaDTO insertarReserva(ReservaEntities dto) {
-        ReservaEntities entity = convertirAReservaEntity(dto);
-        ReservaEntities guardada = reservaRepository.save(entity);
-        return convertirAReservaDTO(guardada);
+    // crear
+    @Transactional
+    public ReservaDTO crear(ReservaDTO dto) {
+        ReservaEntities e = new ReservaEntities();
+        applyDtoToEntity(dto, e, false);
+        return toDTO(reservaRepo.save(e));
     }
 
-    // Actualizar
-    public ReservaDTO actualizarReserva(Long id, ReservaEntities dto) {
-        ReservaEntities entity = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
-
-        entity.setEmpleado(EmpleadoRepository.findById(dto.getEmpleado().getDuiEmpleado())
-                .orElseThrow(() -> new EntityNotFoundException("No existe empleado con DUI: " + dto.getEmpleado().getDuiEmpleado())));
-
-        entity.setRuta(RutaRepository.findById(dto.getRuta().getIdRuta())
-                .orElseThrow(() -> new EntityNotFoundException("No existe ruta con ID: " + dto.getRuta().getIdRuta())));
-
-        entity.setFechaReserva(dto.getFechaReserva());
-        entity.setFechaViaje(dto.getFechaViaje());
-        entity.setEstado(dto.getEstado());
-        entity.setCantidadPasajeros(dto.getCantidadPasajeros());
-        entity.setDescripcion(dto.getDescripcion());
-
-        ReservaEntities actualizada = reservaRepository.save(entity);
-        return convertirAReservaDTO(actualizada);
+    // actualizar
+    @Transactional
+    public Optional<ReservaDTO> actualizar(Long id, ReservaDTO dto) {
+        Optional<ReservaEntities> opt = reservaRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        ReservaEntities e = opt.get();
+        applyDtoToEntity(dto, e, true);
+        return Optional.of(toDTO(reservaRepo.save(e)));
     }
 
-    // Eliminar
-    public boolean eliminarReserva(Long id) {
-        Optional<ReservaEntities> cliente = reservaRepository.findById((id));
-        if (cliente.isPresent()) {
-            reservaRepository.deleteById((id));
-            return true;
+    // eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        if (!reservaRepo.existsById(id)) return false;
+        reservaRepo.deleteById(id);
+        return true;
+    }
+
+    // mapper entity->dto
+    private ReservaDTO toDTO(ReservaEntities e) {
+        ReservaDTO d = new ReservaDTO();
+        d.setId(e.getId());
+        d.setDuiEmpleado(e.getEmpleado() != null ? e.getEmpleado().getDuiEmpleado() : null);
+        d.setIdRuta(e.getRuta() != null ? e.getRuta().getIdRuta() : null);
+        d.setFechaReserva(e.getFechaReserva());
+        d.setFechaViaje(e.getFechaViaje());
+        d.setEstado(e.getEstado());
+        d.setCantidadPasajeros(e.getCantidadPasajeros());
+        d.setDescripcion(e.getDescripcion());
+        return d;
+    }
+
+    // aplicar dto->entity
+    private void applyDtoToEntity(ReservaDTO d, ReservaEntities e, boolean isUpdate) {
+        if (d.getDuiEmpleado() != null || !isUpdate) {
+            if (d.getDuiEmpleado() != null) {
+                EmpleadoEntities emp = empleadoRepo.findById(d.getDuiEmpleado())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe Empleado con DUI: " + d.getDuiEmpleado()));
+                e.setEmpleado(emp);
+            } else {
+                e.setEmpleado(null);
+            }
         }
-        return false;
-    }
-
-    // Convertir Entity a DTO
-    private ReservaDTO convertirAReservaDTO(ReservaEntities entity) {
-        ReservaDTO dto = new ReservaDTO();
-        dto.setId(Long.valueOf(entity.getId()));
-        dto.setDuiEmpleado(entity.getEmpleado().getDuiEmpleado());
-        dto.setIdRuta(entity.getRuta().getIdRuta());
-        dto.setFechaReserva(entity.getFechaReserva());
-        dto.setFechaViaje(entity.getFechaViaje());
-        dto.setEstado(entity.getEstado());
-        dto.setCantidadPasajeros(entity.getCantidadPasajeros());
-        dto.setDescripcion(entity.getDescripcion());
-        return dto;
-    }
-
-    // Convertir DTO a Entity
-    private ReservaEntities convertirAReservaEntity(ReservaEntities dto) {
-        ReservaEntities entity = new ReservaEntities();
-        entity.setId(dto.getId());
-        entity.setEmpleado(EmpleadoRepository.findById(dto.getEmpleado().getDuiEmpleado())
-                .orElseThrow(() -> new EntityNotFoundException("No existe empleado con DUI: " + dto.getEmpleado().getDuiEmpleado())));
-
-        entity.setRuta(RutaRepository.findById(dto.getRuta().getIdRuta())
-                .orElseThrow(() -> new EntityNotFoundException("No existe ruta con ID: " + dto.getRuta().getIdRuta())));
-        entity.setFechaReserva(dto.getFechaReserva());
-        entity.setFechaViaje(dto.getFechaViaje());
-        entity.setEstado(dto.getEstado());
-        entity.setCantidadPasajeros(dto.getCantidadPasajeros());
-        entity.setDescripcion(dto.getDescripcion());
-        return entity;
+        if (d.getIdRuta() != null || !isUpdate) {
+            if (d.getIdRuta() != null) {
+                RutaEntities ruta = rutaRepo.findById(d.getIdRuta())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe Ruta con ID: " + d.getIdRuta()));
+                e.setRuta(ruta);
+            } else {
+                e.setRuta(null);
+            }
+        }
+        e.setFechaReserva(d.getFechaReserva());
+        e.setFechaViaje(d.getFechaViaje());
+        e.setEstado(d.getEstado());
+        e.setCantidadPasajeros(d.getCantidadPasajeros());
+        e.setDescripcion(d.getDescripcion());
     }
 }

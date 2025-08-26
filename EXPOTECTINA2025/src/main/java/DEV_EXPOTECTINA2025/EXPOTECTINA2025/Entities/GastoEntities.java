@@ -18,8 +18,8 @@ import java.time.LocalDate;
 public class GastoEntities {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gasto")
-    @SequenceGenerator(name = "seq_gasto", sequenceName = "SEQ_GASTO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GASTO")
+    @SequenceGenerator(name = "SEQ_GASTO", sequenceName = "SEQ_GASTO", allocationSize = 1)
     @Column(name = "IDGASTO")
     private Long idGasto;
 

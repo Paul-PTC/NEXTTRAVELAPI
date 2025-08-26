@@ -7,23 +7,20 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class RutasGuardadasDTO {
 
-    private Long idRutasGuardadas;
+    private Long idRutaGuardada;
 
     @NotBlank(message = "El DUI del cliente es obligatorio")
+    @Size(max = 10, message = "El DUI no puede superar los 10 caracteres")
     private String duiCliente;
 
-    @NotNull(message = "El ID de la ruta es obligatorio")
+    @NotNull(message = "El id de la ruta es obligatorio")
     private Long idRuta;
 
     @NotBlank(message = "El nombre de la ruta es obligatorio")
-    @Size(max = 100, message = "El nombre de la ruta no puede tener más de 100 caracteres")
+    @Size(max = 100, message = "El nombre de la ruta no puede superar los 100 caracteres")
     private String nombreRuta;
 
     @NotNull(message = "La fecha de guardado es obligatoria")

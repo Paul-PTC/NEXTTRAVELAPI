@@ -23,23 +23,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MultimediaPaqueteController {
 
-    private MultimediaPaqueteService multimediaService;
+    private final MultimediaPaqueteService multimediaService;
 
-    // GET: listar todo
+    // listar
     @GetMapping("/multimedia")
-    public ResponseEntity<List<MultimediaPaqueteDTO>> obtenerTodos() {
-        List<MultimediaPaqueteDTO> lista = multimediaService.listar();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<MultimediaPaqueteDTO>> listar() {
+        return ResponseEntity.ok(multimediaService.listar());
     }
 
-    // GET: por id
+    // obtener por id
     @GetMapping("/multimedia/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            Optional<MultimediaPaqueteDTO> opt = multimediaService.obtenerPorId(id);
-            if (opt.isPresent()) {
-                return ResponseEntity.ok(opt.get());
-            }
+            var opt = multimediaService.obtenerPorId(id);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Multimedia no encontrada"));
         } catch (Exception e) {
@@ -49,49 +46,42 @@ public class MultimediaPaqueteController {
         }
     }
 
-    // POST: crear
+    // crear
     @PostMapping("/insertar")
-    public ResponseEntity<?> registrar(@Valid @RequestBody MultimediaPaqueteDTO dto,
-                                       BindingResult result) {
+    public ResponseEntity<?> crear(@Valid @RequestBody MultimediaPaqueteDTO dto, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
-            for (FieldError err : result.getFieldErrors()) {
-                errores.put(err.getField(), err.getDefaultMessage());
-            }
+            for (FieldError err : result.getFieldErrors()) errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            MultimediaPaqueteDTO creado = multimediaService.crear(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(multimediaService.crear(dto));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            log.error("Error al registrar multimedia: {}", e.getMessage());
+            log.error("Error al crear multimedia: {}", e.getMessage());
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al registrar multimedia", "detalle", e.getMessage()));
+                    .body(Map.of("error", "Error al crear multimedia", "detalle", e.getMessage()));
         }
     }
 
-    // PUT: actualizar
+    // actualizar
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id,
                                         @Valid @RequestBody MultimediaPaqueteDTO dto,
                                         BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
-            for (FieldError err : result.getFieldErrors()) {
-                errores.put(err.getField(), err.getDefaultMessage());
-            }
+            for (FieldError err : result.getFieldErrors()) errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            Optional<MultimediaPaqueteDTO> actualizado = multimediaService.actualizar(id, dto);
-            if (actualizado.isPresent()) {
-                return ResponseEntity.ok(actualizado.get());
-            }
+            var opt = multimediaService.actualizar(id, dto);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Multimedia no encontrada"));
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Multimedia no encontrada", "mensaje", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Error al actualizar multimedia {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
@@ -99,7 +89,7 @@ public class MultimediaPaqueteController {
         }
     }
 
-    // DELETE: eliminar
+    // eliminar
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {

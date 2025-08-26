@@ -5,23 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class MultimediaPaqueteDTO {
 
     private Long idMultimedia;
 
-    @NotNull(message = "El id del lugar turístico es obligatorio")
+    @NotNull(message = "El id del lugar es obligatorio")
     private Long idLugar;
 
-    @NotBlank(message = "La URL no puede estar vacía")
     @Size(max = 255, message = "La URL no puede superar los 255 caracteres")
     private String url;
 
-    @NotBlank(message = "El tipo es obligatorio")
     @Size(max = 50, message = "El tipo no puede superar los 50 caracteres")
     private String tipo;
 

@@ -7,94 +7,78 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.LugarTuristicoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.RangoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.LugarTuristicoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RangoRopository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class LugarTuristicoServices {
-    @Autowired
-    private LugarTuristicoRepository lugarRepository;
 
-    public List<LugarTuristicoDTO> getAllLugarTuristico() {
-        List<LugarTuristicoEntity> lugarTuristico = lugarRepository.findAll();
-        return lugarTuristico.stream()
-                .map(this::convertirALugarTuristicoDTO)
-                .collect(Collectors.toList());
+    private final LugarTuristicoRepository lugarRepo;
+
+    // listar
+    public List<LugarTuristicoDTO> listar() {
+        return lugarRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    public LugarTuristicoDTO insertarLugarTuristico(LugarTuristicoDTO dto) {
-        try {
-            LugarTuristicoEntity nuevoLugarTuristico = new LugarTuristicoEntity();
-
-            // Asignar los datos del DTO a la entidad
-            nuevoLugarTuristico.setNombre(dto.getNombre());
-            nuevoLugarTuristico.setTipoLugar(dto.getTipoLugar());
-            nuevoLugarTuristico.setDescripcion(dto.getDescripcion());
-            nuevoLugarTuristico.setLatitud(dto.getLatitud());
-            nuevoLugarTuristico.setLongitud(dto.getLongitud());
-
-            // Guardar en la base de datos
-            lugarRepository.save(nuevoLugarTuristico);
-
-            // Retornar el DTO (opcionalmente puedes convertir desde la entidad)
-            return dto;
-        } catch (Exception e) {
-            e.printStackTrace(); // para ver el error en consola
-            return null;
-        }
+    // obtener por id
+    public Optional<LugarTuristicoDTO> obtenerPorId(Long id) {
+        return lugarRepo.findById(id).map(this::toDTO);
     }
 
-
-    public LugarTuristicoDTO actualizarLugarTuristico(Long idLugar, LugarTuristicoDTO dto) {
-        // 1. Verificar existencia del lugar turístico
-        LugarTuristicoEntity lugarExistente = lugarRepository.findById(idLugar)
-                .orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Lugar no encontrado"));
-
-        // 2. Actualizar campos
-        lugarExistente.setNombre(dto.getNombre());
-        lugarExistente.setTipoLugar(dto.getTipoLugar());
-        lugarExistente.setDescripcion(dto.getDescripcion());
-        lugarExistente.setLatitud(dto.getLatitud());
-        lugarExistente.setLongitud(dto.getLongitud());
-
-        // 3. Guardar cambios
-        LugarTuristicoEntity lugarActualizado = lugarRepository.save(lugarExistente);
-
-        // 4. Convertir a DTO
-        return convertirALugarTuristicoDTO(lugarActualizado);
+    // crear
+    @Transactional
+    public LugarTuristicoDTO crear(LugarTuristicoDTO dto) {
+        LugarTuristicoEntity e = new LugarTuristicoEntity();
+        applyDtoToEntity(dto, e);
+        return toDTO(lugarRepo.save(e));
     }
 
-
-    // 🔧 Conversión de Entity a DTO
-    private LugarTuristicoDTO convertirALugarTuristicoDTO(LugarTuristicoEntity lugarTuristico) {
-        LugarTuristicoDTO dto = new LugarTuristicoDTO();
-        dto.setIdLugar(lugarTuristico.getIdLugar());
-        dto.setNombre(lugarTuristico.getNombre());
-        dto.setTipoLugar(lugarTuristico.getTipoLugar());
-        dto.setDescripcion(lugarTuristico.getDescripcion());
-        dto.setLatitud(lugarTuristico.getLatitud());
-        dto.setLongitud(lugarTuristico.getLongitud());
-        return dto;
+    // actualizar
+    @Transactional
+    public Optional<LugarTuristicoDTO> actualizar(Long id, LugarTuristicoDTO dto) {
+        Optional<LugarTuristicoEntity> opt = lugarRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        LugarTuristicoEntity e = opt.get();
+        applyDtoToEntity(dto, e);
+        return Optional.of(toDTO(lugarRepo.save(e)));
     }
 
+    // eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        if (!lugarRepo.existsById(id)) return false;
+        lugarRepo.deleteById(id);
+        return true;
+    }
 
-    public boolean EliminarLugarTuristico(Long idLugar){
-        try {
-            LugarTuristicoEntity objLugarTuristico = lugarRepository.findById(idLugar).orElse(null);
-            if (objLugarTuristico != null) {
-                lugarRepository.deleteById(idLugar);
-                return true;
-            }
-            else {
-                System.out.println("Lugar no encontrado");
-                return false;
-            }
-        }catch (EmptyResultDataAccessException e){
-            throw new EmptyResultDataAccessException("No se encontro lugar con ID: " + idLugar + " para eliminar.", 1);
-        }
+    // mapeo a DTO
+    private LugarTuristicoDTO toDTO(LugarTuristicoEntity e) {
+        LugarTuristicoDTO d = new LugarTuristicoDTO();
+        d.setIdLugar(e.getIdLugar());
+        d.setNombre(e.getNombre());
+        d.setTipoLugar(e.getTipoLugar());
+        d.setDescripcion(e.getDescripcion());
+        d.setLatitud(e.getLatitud());
+        d.setLongitud(e.getLongitud());
+        return d;
+    }
+
+    // aplicar DTO a Entity
+    private void applyDtoToEntity(LugarTuristicoDTO d, LugarTuristicoEntity e) {
+        e.setNombre(d.getNombre());
+        e.setTipoLugar(d.getTipoLugar());
+        e.setDescripcion(d.getDescripcion());
+        e.setLatitud(d.getLatitud());
+        e.setLongitud(d.getLongitud());
     }
 }

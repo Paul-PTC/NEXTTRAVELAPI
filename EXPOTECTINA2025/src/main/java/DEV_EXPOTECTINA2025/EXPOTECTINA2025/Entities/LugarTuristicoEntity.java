@@ -11,20 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "LUGARTURISTICO")
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Table(
+        name = "LUGARTURISTICO",
+        uniqueConstraints = @UniqueConstraint(name = "uq_lugar_nombre", columnNames = "NOMBRE")
+)
+@Getter @Setter @ToString @EqualsAndHashCode
 public class LugarTuristicoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_lugar_turistico")
-    @SequenceGenerator(name = "seq_lugar_turistico", sequenceName = "SEQ_LUGAR_TURISTICO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_lugar_turistico_gen")
+    @SequenceGenerator(name = "seq_lugar_turistico_gen", sequenceName = "seq_lugar_turistico", allocationSize = 1)
     @Column(name = "IDLUGAR")
     private Long idLugar;
 
-    @Column(name = "NOMBRE", nullable = false, length = 100)
+    @Column(name = "NOMBRE", nullable = false, length = 100, unique = true)
     private String nombre;
 
     @Column(name = "TIPOLUGAR", length = 50)
@@ -38,8 +38,4 @@ public class LugarTuristicoEntity {
 
     @Column(name = "LONGITUD", nullable = false, precision = 10, scale = 6)
     private BigDecimal longitud;
-
-    @OneToMany(mappedBy = "lugar", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CalificacionLugarEntity> calificacionesLugar = new ArrayList<>();
-
 }

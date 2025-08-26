@@ -1,51 +1,45 @@
-package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.LugarTuristico;
+package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Controllers.Reserva;
 
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExcepcionDatosDuplicados;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsUsuarioNoEncontrado;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.LugarTuristicoDTO;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.RangoDTO;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.LugarTuristico.LugarTuristicoServices;
-import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.RangoEmpleado.RangoEmpleadoServices;
-import jakarta.servlet.http.HttpServletRequest;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.ReservaDTO;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Reserva.ReservaServices;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/apilugar")
+@RequestMapping("/apireserva")
 @RequiredArgsConstructor
-public class LugarTuristicoControllers {
+public class ReservaController {
 
-    private final LugarTuristicoServices lugarService;
+    private final ReservaServices reservaService;
 
     // listar
-    @GetMapping("/lugares")
-    public ResponseEntity<List<LugarTuristicoDTO>> listar() {
-        return ResponseEntity.ok(lugarService.listar());
+    @GetMapping("/reservas")
+    public ResponseEntity<List<ReservaDTO>> listar() {
+        return ResponseEntity.ok(reservaService.listar());
     }
 
     // obtener por id
-    @GetMapping("/lugares/{id}")
+    @GetMapping("/reservas/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            var opt = lugarService.obtenerPorId(id);
+            var opt = reservaService.obtenerPorId(id);
             if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Lugar turístico no encontrado"));
+                    .body(Map.of("error", "Reserva no encontrada"));
         } catch (Exception e) {
-            log.error("Error al obtener lugar {}: {}", id, e.getMessage());
+            log.error("Error al obtener reserva {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Error interno", "detalle", e.getMessage()));
         }
@@ -53,25 +47,27 @@ public class LugarTuristicoControllers {
 
     // crear
     @PostMapping("/insertar")
-    public ResponseEntity<?> crear(@Valid @RequestBody LugarTuristicoDTO dto, BindingResult result) {
+    public ResponseEntity<?> crear(@Valid @RequestBody ReservaDTO dto, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
             for (FieldError err : result.getFieldErrors()) errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(lugarService.crear(dto));
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.crear(dto));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            log.error("Error al crear lugar turístico: {}", e.getMessage());
+            log.error("Error al crear reserva: {}", e.getMessage());
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al crear lugar turístico", "detalle", e.getMessage()));
+                    .body(Map.of("error", "Error al crear reserva", "detalle", e.getMessage()));
         }
     }
 
     // actualizar
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id,
-                                        @Valid @RequestBody LugarTuristicoDTO dto,
+                                        @Valid @RequestBody ReservaDTO dto,
                                         BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
@@ -79,14 +75,16 @@ public class LugarTuristicoControllers {
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            var opt = lugarService.actualizar(id, dto);
+            var opt = reservaService.actualizar(id, dto);
             if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Lugar turístico no encontrado"));
+                    .body(Map.of("error", "Reserva no encontrada"));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            log.error("Error al actualizar lugar {}: {}", id, e.getMessage());
+            log.error("Error al actualizar reserva {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al actualizar lugar turístico", "detalle", e.getMessage()));
+                    .body(Map.of("error", "Error al actualizar reserva", "detalle", e.getMessage()));
         }
     }
 
@@ -94,16 +92,16 @@ public class LugarTuristicoControllers {
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
-            boolean eliminado = lugarService.eliminar(id);
+            boolean eliminado = reservaService.eliminar(id);
             if (!eliminado) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "Lugar turístico no encontrado"));
+                        .body(Map.of("error", "Reserva no encontrada"));
             }
-            return ResponseEntity.ok(Map.of("mensaje", "Lugar turístico eliminado correctamente"));
+            return ResponseEntity.ok(Map.of("mensaje", "Reserva eliminada correctamente"));
         } catch (Exception e) {
-            log.error("Error al eliminar lugar {}: {}", id, e.getMessage());
+            log.error("Error al eliminar reserva {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al eliminar lugar turístico", "detalle", e.getMessage()));
+                    .body(Map.of("error", "Error al eliminar reserva", "detalle", e.getMessage()));
         }
     }
 }

@@ -14,22 +14,22 @@ import java.util.List;
 
 @Entity
 @Table(name = "MANTENIMIENTO")
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Getter @Setter @ToString @EqualsAndHashCode
 public class MantenimientoEntities {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // o SEQUENCE si usas secuencia en Oracle
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_mantenimiento")
+    @SequenceGenerator(name = "seq_mantenimiento", sequenceName = "SEQ_MANTENIMIENTO", allocationSize = 1)
     @Column(name = "IDMANTENIMIENTO")
     private Long idMantenimiento;
 
-    @Column(name = "IDVEHICULO", nullable = false)
-    private Long idVehiculo;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDVEHICULO", referencedColumnName = "IDVEHICULO", nullable = false)
+    private VehiculosEntities vehiculo;
 
-    @Column(name = "IDGASTO", nullable = false)
-    private Long idGasto;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDGASTO", referencedColumnName = "IDGASTO", nullable = false)
+    private GastoEntities gasto;
 
     @Column(name = "FECHAMANTENIMIENTO", nullable = false)
     private LocalDate fechaMantenimiento;
@@ -37,6 +37,6 @@ public class MantenimientoEntities {
     @Column(name = "REALIZADOR", length = 100)
     private String realizador;
 
-    @Column(name = "DESCRIPCION", length = 500)
+    @Column(name = "DESCRIPCION", length = 200)
     private String descripcion;
 }

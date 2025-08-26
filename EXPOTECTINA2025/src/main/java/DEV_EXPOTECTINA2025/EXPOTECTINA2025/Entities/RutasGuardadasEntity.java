@@ -10,10 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "RUTASGUARDADAS")
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Getter @Setter @ToString @EqualsAndHashCode
 public class RutasGuardadasEntity {
 
     @Id
@@ -22,17 +19,17 @@ public class RutasGuardadasEntity {
     @Column(name = "IDRUTAGUARDADA")
     private Long idRutaGuardada;
 
-    @Column(name = "NOMBRERUTA", length = 100, nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "DUICLIENTE", referencedColumnName = "DUICLIENTE", nullable = false)
+    private ClienteEntities cliente;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA", nullable = false)
+    private RutaEntities ruta;
+
+    @Column(name = "NOMBRERUTA", nullable = false, length = 100)
     private String nombreRuta;
 
     @Column(name = "FECHAGUARDADO", nullable = false)
     private LocalDateTime fechaGuardado;
-
-    @ManyToOne
-    @JoinColumn(name = "DUICLIENTE", referencedColumnName = "DUICLIENTE", nullable = false)
-    private ClienteEntities cliente;
-
-    @ManyToOne
-    @JoinColumn(name = "IDRUTA", referencedColumnName = "IDRUTA", nullable = false)
-    private RutaEntities ruta;
 }

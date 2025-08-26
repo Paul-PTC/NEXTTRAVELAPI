@@ -3,8 +3,10 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.LugarTuristico;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.LugarTuristicoEntity;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.MultimediaPaqueteEntities;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.MultimediaPaqueteDTO;
+import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.LugarTuristicoRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.MultimediaPaqueteRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MultimediaPaqueteService {
 
-    private MultimediaPaqueteRepository multimediaRepo;
-
-    @PersistenceContext
-    private EntityManager em;
+    private final MultimediaPaqueteRepository multimediaRepo;
+    private final LugarTuristicoRepository lugarRepo;
 
     // listar
     public List<MultimediaPaqueteDTO> listar() {
@@ -43,8 +43,7 @@ public class MultimediaPaqueteService {
     public MultimediaPaqueteDTO crear(MultimediaPaqueteDTO dto) {
         MultimediaPaqueteEntities e = new MultimediaPaqueteEntities();
         applyDtoToEntity(dto, e, false);
-        MultimediaPaqueteEntities saved = multimediaRepo.save(e);
-        return toDTO(saved);
+        return toDTO(multimediaRepo.save(e));
     }
 
     // actualizar
@@ -52,11 +51,9 @@ public class MultimediaPaqueteService {
     public Optional<MultimediaPaqueteDTO> actualizar(Long id, MultimediaPaqueteDTO dto) {
         Optional<MultimediaPaqueteEntities> opt = multimediaRepo.findById(id);
         if (opt.isEmpty()) return Optional.empty();
-
         MultimediaPaqueteEntities e = opt.get();
         applyDtoToEntity(dto, e, true);
-        MultimediaPaqueteEntities saved = multimediaRepo.save(e);
-        return Optional.of(toDTO(saved));
+        return Optional.of(toDTO(multimediaRepo.save(e)));
     }
 
     // eliminar
@@ -69,24 +66,28 @@ public class MultimediaPaqueteService {
 
     // mapeo a DTO
     private MultimediaPaqueteDTO toDTO(MultimediaPaqueteEntities e) {
-        MultimediaPaqueteDTO dto = new MultimediaPaqueteDTO();
-        dto.setIdMultimedia(e.getIdMultimedia());
-        dto.setIdLugar(e.getLugar() != null ? e.getLugar().getIdLugar() : null);
-        dto.setUrl(e.getUrl());
-        dto.setTipo(e.getTipo());
-        dto.setDescripcion(e.getDescripcion());
-        return dto;
+        MultimediaPaqueteDTO d = new MultimediaPaqueteDTO();
+        d.setIdMultimedia(e.getIdMultimedia());
+        d.setIdLugar(e.getLugar() != null ? e.getLugar().getIdLugar() : null);
+        d.setUrl(e.getUrl());
+        d.setTipo(e.getTipo());
+        d.setDescripcion(e.getDescripcion());
+        return d;
     }
 
-    // aplicar datos del DTO a la Entity
-    private void applyDtoToEntity(MultimediaPaqueteDTO dto, MultimediaPaqueteEntities e, boolean isUpdate) {
-        if (dto.getIdLugar() != null || !isUpdate) {
-            e.setLugar(dto.getIdLugar() != null
-                    ? em.getReference(LugarTuristicoEntity.class, dto.getIdLugar())
-                    : null);
+    // aplicar DTO a Entity
+    private void applyDtoToEntity(MultimediaPaqueteDTO d, MultimediaPaqueteEntities e, boolean isUpdate) {
+        if (d.getIdLugar() != null || !isUpdate) {
+            if (d.getIdLugar() != null) {
+                LugarTuristicoEntity lugar = lugarRepo.findById(d.getIdLugar())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe LugarTuristico con ID: " + d.getIdLugar()));
+                e.setLugar(lugar);
+            } else {
+                e.setLugar(null);
+            }
         }
-        e.setUrl(dto.getUrl());
-        e.setTipo(dto.getTipo());
-        e.setDescripcion(dto.getDescripcion());
+        e.setUrl(d.getUrl());
+        e.setTipo(d.getTipo());
+        e.setDescripcion(d.getDescripcion());
     }
 }
