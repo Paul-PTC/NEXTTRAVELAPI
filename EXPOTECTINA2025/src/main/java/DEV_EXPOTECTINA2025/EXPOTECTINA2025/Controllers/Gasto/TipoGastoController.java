@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,24 +22,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TipoGastoController {
 
-    private TipoGastoService tipoGastoService;
+    private final TipoGastoService tipoGastoService;
 
-    // GET: obtener todos los tipos de gasto
-    @GetMapping("/tiposGasto")
-    public ResponseEntity<List<TipoGastoDTO>> obtenerTodos() {
-        List<TipoGastoDTO> tipos = tipoGastoService.obtenerTodos();
-        return ResponseEntity.ok(tipos);
+    // listar
+    @GetMapping("/tipos")
+    public ResponseEntity<List<TipoGastoDTO>> listar() {
+        return ResponseEntity.ok(tipoGastoService.listar());
     }
 
-    // GET: obtener tipo de gasto por ID
-    @GetMapping("/tiposGasto/{id}")
+    // obtener por id
+    @GetMapping("/tipos/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            TipoGastoDTO dto = tipoGastoService.obtenerPorId(id);
-            return ResponseEntity.ok(dto);
-        } catch (EntityNotFoundException e) {
+            var opt = tipoGastoService.obtenerPorId(id);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Tipo de gasto no encontrado", "mensaje", e.getMessage()));
+                    .body(Map.of("error", "Tipo de gasto no encontrado"));
         } catch (Exception e) {
             log.error("Error al obtener tipo de gasto {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
@@ -46,38 +45,40 @@ public class TipoGastoController {
         }
     }
 
-    // POST: crear tipo de gasto
+    // crear
     @PostMapping("/insertar")
-    public ResponseEntity<?> registrar(@Valid @RequestBody TipoGastoDTO dto, BindingResult result) {
+    public ResponseEntity<?> crear(@Valid @RequestBody TipoGastoDTO dto, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(err -> errores.put(err.getField(), err.getDefaultMessage()));
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            TipoGastoDTO creado = tipoGastoService.registrar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tipoGastoService.crear(dto));
         } catch (Exception e) {
-            log.error("Error al registrar tipo de gasto: {}", e.getMessage());
+            log.error("Error al crear tipo de gasto: {}", e.getMessage());
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error al registrar tipo de gasto", "detalle", e.getMessage()));
+                    .body(Map.of("error", "Error al crear tipo de gasto", "detalle", e.getMessage()));
         }
     }
 
-    // PUT: actualizar tipo de gasto
+    // actualizar
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody TipoGastoDTO dto, BindingResult result) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @Valid @RequestBody TipoGastoDTO dto,
+                                        BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
-            result.getFieldErrors().forEach(err -> errores.put(err.getField(), err.getDefaultMessage()));
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            TipoGastoDTO actualizado = tipoGastoService.actualizar(id, dto);
-            return ResponseEntity.ok(actualizado);
-        } catch (EntityNotFoundException e) {
+            var opt = tipoGastoService.actualizar(id, dto);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Tipo de gasto no encontrado", "mensaje", e.getMessage()));
+                    .body(Map.of("error", "Tipo de gasto no encontrado"));
         } catch (Exception e) {
             log.error("Error al actualizar tipo de gasto {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError()
@@ -85,7 +86,7 @@ public class TipoGastoController {
         }
     }
 
-    // DELETE: eliminar tipo de gasto
+    // eliminar
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -102,4 +103,3 @@ public class TipoGastoController {
         }
     }
 }
-

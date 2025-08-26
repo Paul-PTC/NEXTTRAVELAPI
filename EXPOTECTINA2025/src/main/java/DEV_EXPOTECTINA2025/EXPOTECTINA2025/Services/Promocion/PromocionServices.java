@@ -6,82 +6,82 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsItinerarioEmplea
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPago;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPromocion;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.PromocionRepo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class PromocionServices {
 
-    @Autowired
-    private PromocionRepo repo;
+    private final PromocionRepo promoRepo;
 
-    public List<DTOPromocion> getAllPromocion() {
-        List<PromocionEntities> promo = repo.findAll();
-        return promo.stream()
-                .map(this::convertirAPromocionEmpleadoDTO)
-                .collect(Collectors.toList());
+    // listar
+    public List<DTOPromocion> listar() {
+        return promoRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    private DTOPromocion convertirAPromocionEmpleadoDTO(PromocionEntities promo) {
-        DTOPromocion dto = new DTOPromocion();
-        promo.setIdPromocion(dto.getIdPromocion());
-        dto.setNombre(promo.getNombre());
-        dto.setDescripcion(promo.getDescripcion());
-        dto.setPorcentaje(Float.parseFloat(promo.getDescripcion()));
-        dto.setFechainicio((Date) promo.getFechainicio());
-        dto.setFechafin((Date) promo.getFechafin());
-        dto.setPuntosRequeridos(promo.getPuntosRequeridos());
-        dto.setEstado(promo.getEstado());
-
-        return dto;
+    // obtener por id
+    public Optional<DTOPromocion> obtenerPorId(Long id) {
+        return promoRepo.findById(id).map(this::toDTO);
     }
 
-    public DTOPromocion InsertarPromocion(DTOPromocion pago) {
-        try {
-            PromocionEntities promoEnti = new PromocionEntities();
-            promoEnti.setNombre(pago.getNombre());
-            promoEnti.setDescripcion(pago.getDescripcion());
-            promoEnti.setPorcentaje(pago.getPorcentaje());
-            promoEnti.setFechainicio(pago.getFechainicio());
-            promoEnti.setFechafin(pago.getFechafin());
-            promoEnti.setPuntosRequeridos(pago.getPuntosRequeridos());
-            promoEnti.setEstado(pago.getEstado());
-            return pago;
-        } catch (Exception e) {
-            return null;
-        }
+    // crear
+    @Transactional
+    public DTOPromocion crear(DTOPromocion dto) {
+        PromocionEntities e = new PromocionEntities();
+        applyDtoToEntity(dto, e);
+        return toDTO(promoRepo.save(e));
     }
 
-
-    public DTOPromocion ActualizarPromocion(Long idpromo, DTOPromocion dto){
-        try{
-
-            PromocionEntities entit = repo.findById(idpromo).orElseThrow(() -> new ExceptionsItinerarioEmpleadoNoEncontrado("Promocion no encontrado con ID: " + idpromo));
-            entit.setNombre(dto.getNombre());
-            entit.setDescripcion(dto.getDescripcion());
-            entit.setPorcentaje(dto.getPorcentaje());
-            entit.setFechainicio(dto.getFechainicio());
-            entit.setFechafin(dto.getFechafin());
-            entit.setPuntosRequeridos(dto.getPuntosRequeridos());
-            entit.setEstado(dto.getEstado());
-
-            PromocionEntities pago = repo.save(entit);
-            return convertirAPromocionEmpleadoDTO(pago);
-        }catch (Exception e) {
-            return null;
-        }
+    // actualizar
+    @Transactional
+    public Optional<DTOPromocion> actualizar(Long id, DTOPromocion dto) {
+        Optional<PromocionEntities> opt = promoRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        PromocionEntities e = opt.get();
+        applyDtoToEntity(dto, e);
+        return Optional.of(toDTO(promoRepo.save(e)));
     }
 
-
-
-    public boolean eliminarPromocion(Long id) {
-        if (!repo.existsById(id)) return false;
-        repo.deleteById(id);
+    // eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        if (!promoRepo.existsById(id)) return false;
+        promoRepo.deleteById(id);
         return true;
     }
 
+    // mapper entity -> dto
+    private DTOPromocion toDTO(PromocionEntities e) {
+        DTOPromocion d = new DTOPromocion();
+        d.setIdPromocion(e.getIdPromocion());
+        d.setNombre(e.getNombre());
+        d.setDescripcion(e.getDescripcion());
+        d.setPorcentaje(e.getPorcentaje());
+        d.setFechaInicio(e.getFechaInicio());
+        d.setFechaFin(e.getFechaFin());
+        d.setPuntosRequeridos(e.getPuntosRequeridos());
+        d.setEstado(e.getEstado());
+        return d;
+    }
+
+    // aplicar dto -> entity
+    private void applyDtoToEntity(DTOPromocion d, PromocionEntities e) {
+        e.setNombre(d.getNombre());
+        e.setDescripcion(d.getDescripcion());
+        e.setPorcentaje(d.getPorcentaje());
+        e.setFechaInicio(d.getFechaInicio());
+        e.setFechaFin(d.getFechaFin());
+        e.setPuntosRequeridos(d.getPuntosRequeridos());
+        e.setEstado(d.getEstado());
+    }
 }

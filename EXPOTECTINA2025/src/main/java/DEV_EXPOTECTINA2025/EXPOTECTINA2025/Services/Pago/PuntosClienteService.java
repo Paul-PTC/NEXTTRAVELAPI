@@ -7,86 +7,84 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ClienteRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.PuntosClienteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PuntosClienteService {
 
-    @Autowired
-    private PuntosClienteRepository puntosRepo;
+    private final PuntosClienteRepository puntosRepo;
+    private final ClienteRepository clienteRepo; // PK = String (DUI)
 
-    @Autowired
-    private ClienteRepository clienteRepo;
-
-    // LISTAR
-    public List<PuntosClienteDTO> obtenerTodos() {
-        return puntosRepo.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    // listar
+    public List<PuntosClienteDTO> listar() {
+        return puntosRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    // OBTENER POR ID
-    public PuntosClienteDTO obtenerPorId(Long id) {
-        PuntosClienteEntities e = puntosRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontraron puntos con ID: " + id));
-        return toDTO(e);
+    // obtener por id
+    public Optional<PuntosClienteDTO> obtenerPorId(Long id) {
+        return puntosRepo.findById(id).map(this::toDTO);
     }
 
-    // CREAR
-    public PuntosClienteDTO registrar(@Valid PuntosClienteDTO dto) {
-        ClienteEntities cliente = clienteRepo.findById(dto.getDuiCliente())
-                .orElseThrow(() -> new EntityNotFoundException("No existe cliente con DUI: " + dto.getDuiCliente()));
-
+    // crear
+    @Transactional
+    public PuntosClienteDTO crear(PuntosClienteDTO dto) {
         PuntosClienteEntities e = new PuntosClienteEntities();
-        e.setIdPuntos(null); // asegurar inserción
-        e.setCliente(cliente);
-        e.setPuntosAcumulados(dto.getPuntosAcumulados());
-        e.setPuntosCanjeados(dto.getPuntosCanjeados());
-        e.setUltimaActualizacion(dto.getUltimaActualizacion());
-
-        e = puntosRepo.save(e);
-        return toDTO(e);
+        applyDtoToEntity(dto, e, false);
+        return toDTO(puntosRepo.save(e));
     }
 
-    // ACTUALIZAR
-    public PuntosClienteDTO actualizar(Long id, @Valid PuntosClienteDTO dto) {
-        PuntosClienteEntities e = puntosRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontraron puntos con ID: " + id));
-
-        ClienteEntities cliente = clienteRepo.findById(dto.getDuiCliente())
-                .orElseThrow(() -> new EntityNotFoundException("No existe cliente con DUI: " + dto.getDuiCliente()));
-
-        e.setCliente(cliente);
-        e.setPuntosAcumulados(dto.getPuntosAcumulados());
-        e.setPuntosCanjeados(dto.getPuntosCanjeados());
-        e.setUltimaActualizacion(dto.getUltimaActualizacion());
-
-        e = puntosRepo.save(e);
-        return toDTO(e);
+    // actualizar
+    @Transactional
+    public Optional<PuntosClienteDTO> actualizar(Long id, PuntosClienteDTO dto) {
+        Optional<PuntosClienteEntities> opt = puntosRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        PuntosClienteEntities e = opt.get();
+        applyDtoToEntity(dto, e, true);
+        return Optional.of(toDTO(puntosRepo.save(e)));
     }
 
-    // ELIMINAR
+    // eliminar
+    @Transactional
     public boolean eliminar(Long id) {
         if (!puntosRepo.existsById(id)) return false;
         puntosRepo.deleteById(id);
         return true;
     }
 
-    // ====== MAPPER ======
+    // mapper entity -> dto
     private PuntosClienteDTO toDTO(PuntosClienteEntities e) {
         PuntosClienteDTO d = new PuntosClienteDTO();
         d.setIdPuntos(e.getIdPuntos());
+        d.setDuiCliente(e.getCliente() != null ? e.getCliente().getDuiCliente() : null);
         d.setPuntosAcumulados(e.getPuntosAcumulados());
         d.setPuntosCanjeados(e.getPuntosCanjeados());
         d.setUltimaActualizacion(e.getUltimaActualizacion());
-        if (e.getCliente() != null) d.setDuiCliente(e.getCliente().getDuiCliente());
         return d;
+    }
+
+    // aplicar dto -> entity
+    private void applyDtoToEntity(PuntosClienteDTO d, PuntosClienteEntities e, boolean isUpdate) {
+        if (d.getDuiCliente() != null || !isUpdate) {
+            if (d.getDuiCliente() != null) {
+                ClienteEntities cliente = clienteRepo.findById(d.getDuiCliente())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe Cliente con DUI: " + d.getDuiCliente()));
+                e.setCliente(cliente);
+            } else {
+                e.setCliente(null);
+            }
+        }
+        e.setPuntosAcumulados(d.getPuntosAcumulados());
+        e.setPuntosCanjeados(d.getPuntosCanjeados());
+        e.setUltimaActualizacion(d.getUltimaActualizacion());
     }
 }

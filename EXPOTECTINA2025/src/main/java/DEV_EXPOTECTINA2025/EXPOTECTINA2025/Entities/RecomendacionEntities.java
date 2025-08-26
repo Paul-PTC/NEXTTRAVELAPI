@@ -8,21 +8,18 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "RECOMENDACION")
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Getter @Setter @ToString @EqualsAndHashCode
 public class RecomendacionEntities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recomendacion")
-    @SequenceGenerator(name = "seq_recomendacion", sequenceName = "SEQ_RECOMENDACION", allocationSize = 1)
+    @SequenceGenerator(name = "seq_recomendacion", sequenceName = "seq_Recomendacion", allocationSize = 1)
     @Column(name = "IDRECOMENDACION")
     private Long idRecomendacion;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "DUICLIENTE", referencedColumnName = "DUICLIENTE", nullable = false)
-    private ClienteEntities cliente; // FK → Cliente(duiCliente)
+    private ClienteEntities cliente;
 
     @Column(name = "TIPOLUGAR", nullable = false, length = 50)
     private String tipoLugar;

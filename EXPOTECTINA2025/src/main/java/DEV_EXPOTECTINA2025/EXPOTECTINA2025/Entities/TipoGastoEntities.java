@@ -4,18 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "TIPOGASTO")
+@Table(
+        name = "TIPOGASTO",
+        uniqueConstraints = @UniqueConstraint(name = "uq_tipogasto_nombre", columnNames = "NOMBRETIPO")
+)
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
 public class TipoGastoEntities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tipogasto")
-    @SequenceGenerator(name = "seq_tipogasto", sequenceName = "SEQ_TIPOGASTO", allocationSize = 1)
+    @SequenceGenerator(name = "seq_tipogasto", sequenceName = "seq_TipoGasto", allocationSize = 1)
     @Column(name = "IDTIPOGASTO")
     private Long idTipoGasto;
 

@@ -14,7 +14,7 @@ public class TipoGastoDTO {
     private Long idTipoGasto;
 
     @NotBlank(message = "El nombre del tipo de gasto es obligatorio")
-    @Size(max = 100, message = "El nombre no puede tener más de 100 caracteres")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombreTipo;
 
     @Size(max = 200, message = "La descripción no puede superar los 200 caracteres")

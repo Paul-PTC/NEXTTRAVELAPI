@@ -10,10 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PUNTOSCLIENTE")
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Getter @Setter @ToString @EqualsAndHashCode
 public class PuntosClienteEntities {
 
     @Id
@@ -24,7 +21,7 @@ public class PuntosClienteEntities {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "DUICLIENTE", referencedColumnName = "DUICLIENTE", nullable = false)
-    private ClienteEntities cliente; // FK → Cliente(duiCliente)
+    private ClienteEntities cliente;
 
     @Column(name = "PUNTOSACUMULADOS", nullable = false)
     private Integer puntosAcumulados;

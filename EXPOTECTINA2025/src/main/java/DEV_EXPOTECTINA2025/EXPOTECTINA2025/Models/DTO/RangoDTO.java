@@ -1,21 +1,22 @@
 package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
-@ToString
-@EqualsAndHashCode
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class RangoDTO {
-    private Long id;
+
+    private Long idRango;
 
     @NotBlank(message = "El nombre del rango es obligatorio")
+    @Size(max = 50, message = "El nombre del rango no puede superar los 50 caracteres")
     private String nombreRango;
 
-    @NotBlank(message = "La descripción del rango es obligatoria")
+    @Size(max = 200, message = "La descripción no puede superar los 200 caracteres")
     private String descripcion;
 }

@@ -3,19 +3,16 @@ package DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
-@EqualsAndHashCode
 public class CalificacionDTO {
-
 
     private Long idCalificacion;
 

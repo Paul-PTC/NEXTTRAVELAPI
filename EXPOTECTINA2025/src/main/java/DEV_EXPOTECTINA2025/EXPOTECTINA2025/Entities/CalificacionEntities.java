@@ -22,14 +22,14 @@ public class CalificacionEntities {
     @Column(name = "IDCALIFICACION")
     private Long idCalificacion;
 
-    @ManyToOne
-    @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "IDRESERVA", referencedColumnName = "IDRESERVA", nullable = false)
     private ReservaEntities reserva;
 
-    @Column(name = "CALIFICACION")
+    @Column(name = "CALIFICACION", nullable = false)
     private Integer calificacion;
 
-    @Column(name = "FECHACALIFICACION")
+    @Column(name = "FECHACALIFICACION", nullable = false)
     private LocalDateTime fechaCalificacion;
 }
 

@@ -135,7 +135,7 @@ public class EmpleadoServices {
         EmpleadoDTO dto = new EmpleadoDTO();
         dto.setDuiEmpleado(empleado.getDuiEmpleado());
         dto.setIdUsuario(empleado.getUsuario().getId());
-        dto.setIdRango(empleado.getRango().getId());
+        dto.setIdRango(empleado.getRango().getIdRango());
         dto.setNombre(empleado.getNombre());
         dto.setApellido(empleado.getApellido());
         dto.setTelefono(empleado.getTelefono());

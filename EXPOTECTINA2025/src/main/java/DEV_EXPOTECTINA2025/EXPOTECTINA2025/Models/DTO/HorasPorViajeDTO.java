@@ -4,46 +4,31 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Entities.EmpleadoEntities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
-@ToString
-@EqualsAndHashCode
-@Getter
-@Setter
+@Getter @Setter @NoArgsConstructor
+@AllArgsConstructor @ToString
 public class HorasPorViajeDTO {
-    @NotNull(message = "El ID de las HorasViaje es obligatorio")
+
     private Long idHorasViaje;
 
-   /* @NotNull(message = "El ID de DuiEmpleado es obligatorio")
-    private EmpleadoEntities Empleado ;*/
+    @NotBlank(message = "El DUI del empleado es obligatorio")
+    @Size(max = 10, message = "El DUI no puede superar los 10 caracteres")
+    private String duiEmpleado;
 
-    @NotNull(message = "El DUI de empleado es obligatorio")
-    private String empleado;
-
-    @NotNull(message = "El ID de Ruta es obligatorio")
+    @NotNull(message = "El id de la ruta es obligatorio")
     private Long idRuta;
 
-    @NotNull(message = "La fecha de viaje es obligatoria")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date fechaViaje;
+    private LocalDate fechaViaje;
 
-    @NotNull(message = "La Hora de salida es obligatoria")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime horaSalida;
 
-    @NotNull(message = "La Hora de llegada es obligatoria")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime horaLlegada;
 
-    @NotBlank(message = "La duracion es obligatoria")
+    @Size(max = 20, message = "La duración no puede superar los 20 caracteres")
     private String duracion;
-
-    @NotNull(message = "El ID del Vehículo es obligatorio")
-    private Long idVehiculo;
-
 }

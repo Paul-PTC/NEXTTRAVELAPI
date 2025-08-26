@@ -8,11 +8,14 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.RangoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.RangoEmpleado.RangoEmpleadoServices;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -20,93 +23,90 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
-@RequestMapping("/apiRangoEmpledos")
+@RequestMapping("/apirango")
+@RequiredArgsConstructor
 public class RangoEmpleadosControllers {
-    @Autowired
-    private RangoEmpleadoServices accesoRango;
 
-    @GetMapping("/RangoEmpleados")
-    public List<RangoDTO> datosRango(){
-        return accesoRango.getAllRangoEmpleado();
+    private final RangoEmpleadoServices rangoService;
+
+    // listar
+    @GetMapping("/rangos")
+    public ResponseEntity<List<RangoDTO>> listar() {
+        return ResponseEntity.ok(rangoService.listar());
     }
 
-    @PostMapping("/insertarRangoEmpleado")
-    public ResponseEntity<Map<String, Object>> registrarRangoEmpleado(@Valid @RequestBody RangoDTO rangoEmpleado, HttpServletRequest request){
+    // obtener por id
+    @GetMapping("/rangos/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            //Intentamos guardar los datos
-            RangoDTO respuesta = accesoRango.insertarRangoEmpleado(rangoEmpleado);
-            if (respuesta == null){
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "Inserción incorrecta",
-                        "errorType", "VALIDATION_ERROR",
-                        "message", "Datos del rango inválidos"
-                ));
-            }
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "status","sucess",
-                    "data",respuesta
-            ));
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "status", "error",
-                            "message", "Error al registrar usuario",
-                            "detail", e.getMessage()
-                    ));
+            var opt = rangoService.obtenerPorId(id);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Rango no encontrado"));
+        } catch (Exception e) {
+            log.error("Error al obtener rango {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error interno", "detalle", e.getMessage()));
         }
     }
-    @PutMapping("/ActualizarRangoEmp/{id}")
-    public ResponseEntity<?> modificarRangoEmpleado(
-            @PathVariable Long id,
-            @Valid @RequestBody RangoDTO rangoDTO,
-            BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+
+    // crear
+    @PostMapping("/insertar")
+    public ResponseEntity<?> crear(@Valid @RequestBody RangoDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
             Map<String, String> errores = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error ->
-                    errores.put(error.getField(), error.getDefaultMessage()));
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
-        try{
-            RangoDTO RangoActualizado = accesoRango.actualizarRangoEmpleado(rangoDTO.getId(), rangoDTO);
-            return ResponseEntity.ok(RangoActualizado);
-        }
-        catch (ExceptionsUsuarioNoEncontrado e){
-            return ResponseEntity.notFound().build();
-        }
-        catch (ExcepcionDatosDuplicados e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
-            );
-        }
-    }
-
-    @DeleteMapping("/EliminarRangoEmp/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarRangoEmp(@PathVariable Long id){
         try {
-            if (!accesoRango.EliminarEmpleadoRango(id)){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .header("X-Mensaje de error", "Rango de empleado no encontrado")
-                        .body(Map.of(
-                                "error", "Not found",  // Tipo de error
-                                "mensaje", "El rango no ha sido encontrado",  // Mensaje descriptivo
-                                "timestamp", Instant.now().toString()  // Marca de tiempo del error
-                        ));
-            }
-            return ResponseEntity.ok().body(Map.of(
-                    "status", "Proceso completado",  // Estado de la operación
-                    "message", "Rango eliminado exitosamente"  // Mensaje de éxito
-            ));
+            return ResponseEntity.status(HttpStatus.CREATED).body(rangoService.crear(dto));
+        } catch (Exception e) {
+            log.error("Error al crear rango: {}", e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al crear rango", "detalle", e.getMessage()));
         }
-        catch (Exception e){
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "status", "Error",  // Indicador de error
-                    "message", "Error al eliminar el usuario",  // Mensaje general
-                    "detail", e.getMessage()  // Detalles técnicos del error (para debugging)
-            ));
-        }
-
     }
 
+    // actualizar
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @Valid @RequestBody RangoDTO dto,
+                                        BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
+            return ResponseEntity.badRequest().body(errores);
+        }
+        try {
+            var opt = rangoService.actualizar(id, dto);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Rango no encontrado"));
+        } catch (Exception e) {
+            log.error("Error al actualizar rango {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al actualizar rango", "detalle", e.getMessage()));
+        }
+    }
+
+    // eliminar
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            boolean eliminado = rangoService.eliminar(id);
+            if (!eliminado) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Rango no encontrado"));
+            }
+            return ResponseEntity.ok(Map.of("mensaje", "Rango eliminado correctamente"));
+        } catch (Exception e) {
+            log.error("Error al eliminar rango {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al eliminar rango", "detalle", e.getMessage()));
+        }
+    }
 }

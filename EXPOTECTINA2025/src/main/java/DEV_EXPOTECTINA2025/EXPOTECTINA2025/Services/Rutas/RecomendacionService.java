@@ -21,15 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecomendacionService {
 
-    private RecomendacionRepository recomendacionRepo;
-    private ClienteRepository clienteRepository;
+    private final RecomendacionRepository recomendacionRepo;
+    private final ClienteRepository clienteRepo;
 
     // listar
     public List<RecomendacionDTO> listar() {
-        return recomendacionRepo.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return recomendacionRepo.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     // obtener por id
@@ -42,8 +39,7 @@ public class RecomendacionService {
     public RecomendacionDTO crear(RecomendacionDTO dto) {
         RecomendacionEntities e = new RecomendacionEntities();
         applyDtoToEntity(dto, e, false);
-        RecomendacionEntities saved = recomendacionRepo.save(e);
-        return toDTO(saved);
+        return toDTO(recomendacionRepo.save(e));
     }
 
     // actualizar
@@ -51,11 +47,9 @@ public class RecomendacionService {
     public Optional<RecomendacionDTO> actualizar(Long id, RecomendacionDTO dto) {
         Optional<RecomendacionEntities> opt = recomendacionRepo.findById(id);
         if (opt.isEmpty()) return Optional.empty();
-
         RecomendacionEntities e = opt.get();
         applyDtoToEntity(dto, e, true);
-        RecomendacionEntities saved = recomendacionRepo.save(e);
-        return Optional.of(toDTO(saved));
+        return Optional.of(toDTO(recomendacionRepo.save(e)));
     }
 
     // eliminar
@@ -66,32 +60,30 @@ public class RecomendacionService {
         return true;
     }
 
-    // mapeo a DTO
+    // mapeo entity -> dto
     private RecomendacionDTO toDTO(RecomendacionEntities e) {
-        RecomendacionDTO dto = new RecomendacionDTO();
-        dto.setIdRecomendacion(e.getIdRecomendacion());
-        dto.setDuiCliente(e.getCliente() != null ? e.getCliente().getDuiCliente() : null);
-        dto.setTipoLugar(e.getTipoLugar());
-        dto.setLugarSugerido(e.getLugarSugerido());
-        dto.setDescripcion(e.getDescripcion());
-        return dto;
+        RecomendacionDTO d = new RecomendacionDTO();
+        d.setIdRecomendacion(e.getIdRecomendacion());
+        d.setDuiCliente(e.getCliente() != null ? e.getCliente().getDuiCliente() : null);
+        d.setTipoLugar(e.getTipoLugar());
+        d.setLugarSugerido(e.getLugarSugerido());
+        d.setDescripcion(e.getDescripcion());
+        return d;
     }
 
-    // aplicar datos del DTO a la Entity
-    private void applyDtoToEntity(RecomendacionDTO dto, RecomendacionEntities e, boolean isUpdate) {
-        if (dto.getDuiCliente() != null || !isUpdate) {
-            if (dto.getDuiCliente() != null) {
-                ClienteEntities cliente = clienteRepository.findById(dto.getDuiCliente())
-                        .orElseThrow(() -> new EntityNotFoundException(
-                                "No se encontró el cliente con DUI: " + dto.getDuiCliente()));
-                e.setCliente(cliente);
+    // aplicar dto -> entity
+    private void applyDtoToEntity(RecomendacionDTO d, RecomendacionEntities e, boolean isUpdate) {
+        if (d.getDuiCliente() != null || !isUpdate) {
+            if (d.getDuiCliente() != null) {
+                ClienteEntities c = clienteRepo.findById(d.getDuiCliente())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe Cliente con DUI: " + d.getDuiCliente()));
+                e.setCliente(c);
             } else {
                 e.setCliente(null);
             }
         }
-        e.setTipoLugar(dto.getTipoLugar());
-        e.setLugarSugerido(dto.getLugarSugerido());
-        e.setDescripcion(dto.getDescripcion());
+        e.setTipoLugar(d.getTipoLugar());
+        e.setLugarSugerido(d.getLugarSugerido());
+        e.setDescripcion(d.getDescripcion());
     }
-
 }

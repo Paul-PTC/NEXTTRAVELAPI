@@ -6,77 +6,75 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Exceptions.ExceptionsUsuarioNoEncontr
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.EmpleadoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.RangoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.RangoRopository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class RangoEmpleadoServices {
-    @Autowired
-    private RangoRopository rangoRepository;
 
-    public List<RangoDTO> getAllRangoEmpleado() {
-        List<RangoEntity> rangoEmpleados = rangoRepository.findAll();
-        return rangoEmpleados.stream()
-                .map(this::convertirARangoDTO)
+    private final RangoRopository rangoRepo;
+
+    // listar
+    public List<RangoDTO> listar() {
+        return rangoRepo.findAll()
+                .stream()
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public RangoDTO insertarRangoEmpleado(RangoDTO dto) {
-        try {
-            RangoEntity nuevoRangoEmpleado = new RangoEntity();
-
-            nuevoRangoEmpleado.setNombreRango(dto.getNombreRango());
-            nuevoRangoEmpleado.setDescripcion(dto.getDescripcion());
-
-            rangoRepository.save(nuevoRangoEmpleado);
-
-            return dto;
-        } catch (Exception e) {
-            e.printStackTrace(); // ¡Para que puedas ver el error!
-            return null;
-        }
-    }
-    public RangoDTO actualizarRangoEmpleado(Long id, RangoDTO dto){
-        //1. Verificar existencia
-        RangoEntity rangoExistente = rangoRepository.findById(id).orElseThrow(() -> new ExceptionsUsuarioNoEncontrado("Rango no encontrado"));
-        //2. Actualizar campos
-        rangoExistente.setId(dto.getId()); //vemos talvez error
-        rangoExistente.setNombreRango(dto.getNombreRango());
-        rangoExistente.setDescripcion(dto.getDescripcion());
-
-        // 5 Guardar cambios
-        RangoEntity rangoActualizar = rangoRepository.save(rangoExistente);
-        // 6 Convertir a DTO
-        return convertirARangoDTO(rangoActualizar);
+    // obtener por id
+    public Optional<RangoDTO> obtenerPorId(Long id) {
+        return rangoRepo.findById(id).map(this::toDTO);
     }
 
-    // 🔧 Conversión de Entity a DTO
-    private RangoDTO convertirARangoDTO(RangoEntity rango) {
-        RangoDTO dto = new RangoDTO();
-        dto.setId(rango.getId());
-        dto.setNombreRango(rango.getNombreRango());
-        dto.setDescripcion(rango.getDescripcion());
-        return dto;
+    // crear
+    @Transactional
+    public RangoDTO crear(RangoDTO dto) {
+        RangoEntity e = new RangoEntity();
+        applyDtoToEntity(dto, e);
+        return toDTO(rangoRepo.save(e));
     }
 
-    public boolean EliminarEmpleadoRango(Long id){
-        try {
-            RangoEntity objRango = rangoRepository.findById(id).orElse(null);
-            if (objRango != null) {
-                rangoRepository.deleteById(id);
-                return true;
-            }
-            else {
-                System.out.println("Rango no encontrado");
-                return false;
-            }
-        }catch (EmptyResultDataAccessException e){
-            throw new EmptyResultDataAccessException("No se encontro usuario con ID: " + id + " para eliminar.", 1);
-        }
+    // actualizar
+    @Transactional
+    public Optional<RangoDTO> actualizar(Long id, RangoDTO dto) {
+        Optional<RangoEntity> opt = rangoRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        RangoEntity e = opt.get();
+        applyDtoToEntity(dto, e);
+        return Optional.of(toDTO(rangoRepo.save(e)));
+    }
+
+    // eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        if (!rangoRepo.existsById(id)) return false;
+        rangoRepo.deleteById(id);
+        return true;
+    }
+
+    // mapper entity -> dto
+    private RangoDTO toDTO(RangoEntity e) {
+        RangoDTO d = new RangoDTO();
+        d.setIdRango(e.getIdRango());
+        d.setNombreRango(e.getNombreRango());
+        d.setDescripcion(e.getDescripcion());
+        return d;
+    }
+
+    // aplicar dto -> entity
+    private void applyDtoToEntity(RangoDTO d, RangoEntity e) {
+        e.setNombreRango(d.getNombreRango());
+        e.setDescripcion(d.getDescripcion());
     }
 }

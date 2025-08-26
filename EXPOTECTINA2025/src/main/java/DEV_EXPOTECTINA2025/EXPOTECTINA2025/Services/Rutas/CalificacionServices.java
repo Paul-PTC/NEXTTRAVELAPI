@@ -7,10 +7,12 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.CalificacionRepository;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.ReservaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,104 +20,73 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CalificacionServices {
 
-    @Autowired
-    private CalificacionRepository repo;
+    private final CalificacionRepository calificacionRepo;
+    private final ReservaRepository reservaRepo;
 
-    @Autowired
-    private ReservaRepository reservaRepository;
-
-    // Obtener todas las calificaciones
-    public List<CalificacionDTO> getAllCalificaciones() {
-        List<CalificacionEntities> Calificaciones = repo.findAll();
-        return Calificaciones.stream()
-                .map(this::convertirACalificacionDTO)
+    // listar
+    public List<CalificacionDTO> listar() {
+        return calificacionRepo.findAll()
+                .stream()
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-
-
-    // Conversión de Entity a DTO
-    private CalificacionDTO convertirACalificacionDTO(CalificacionEntities entidad) {
-        CalificacionDTO dto = new CalificacionDTO();
-
-        // Extraemos el ID de la entidad reserva asociada
-        if (entidad.getReserva() != null) {
-            dto.setIdReserva(Long.valueOf(entidad.getReserva().getId()));
-        }
-        dto.setIdCalificacion(entidad.getIdCalificacion());
-        dto.setCalificacion(entidad.getCalificacion());
-        dto.setFechaCalificacion(entidad.getFechaCalificacion());
-
-        return dto;
+    // obtener por id
+    public Optional<CalificacionDTO> obtenerPorId(Long id) {
+        return calificacionRepo.findById(id).map(this::toDTO);
     }
 
-    public CalificacionDTO insertarCalificaciones(@Valid CalificacionDTO calificacionDTO) {
-        // Validación básica: asegúrate de que venga el ID de la reserva y el valor de la calificación
-        if (calificacionDTO == null || calificacionDTO.getIdReserva() == null || calificacionDTO.getCalificacion() == null) {
-            throw new IllegalArgumentException("La calificación y la reserva no pueden ser nulas.");
-        }
-
-        try {
-            // Buscamos la reserva asociada en la base de datos
-            Optional<ReservaEntities> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
-            if (reservaOptional.isEmpty()) {
-                throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
-            }
-
-            // Convertimos el DTO en entidad y le asignamos la reserva encontrada
-            CalificacionEntities entidad = new CalificacionEntities();
-            entidad.setReserva(reservaOptional.get());
-            entidad.setCalificacion(calificacionDTO.getCalificacion());
-            entidad.setFechaCalificacion(calificacionDTO.getFechaCalificacion());
-
-            // Guardamos en la base de datos
-            CalificacionEntities guardada = repo.save(entidad);
-
-            // Devolvemos la respuesta como DTO
-            return convertirACalificacionDTO(guardada);
-
-        } catch (Exception e) {
-            log.error("Error al insertar calificación: " + e.getMessage());
-            throw new RuntimeException("Error al registrar la calificación: " + e.getMessage());
-        }
+    // crear
+    @Transactional
+    public CalificacionDTO crear(CalificacionDTO dto) {
+        CalificacionEntities e = new CalificacionEntities();
+        applyDtoToEntity(dto, e, false);
+        return toDTO(calificacionRepo.save(e));
     }
 
-    public CalificacionDTO actualizarCalificacion(Long id, CalificacionDTO calificacionDTO) {
-        CalificacionEntities entidad = repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró la calificación con ID: " + id));
-
-        // Verificamos que la nueva reserva exista si es que se quiere cambiar
-        Optional<ReservaEntities> reservaOptional = reservaRepository.findById(calificacionDTO.getIdReserva());
-        if (reservaOptional.isEmpty()) {
-            throw new EntityNotFoundException("No se encontró la reserva con ID: " + calificacionDTO.getIdReserva());
-        }
-
-        entidad.setReserva(reservaOptional.get());
-        entidad.setCalificacion(calificacionDTO.getCalificacion());
-        entidad.setFechaCalificacion(calificacionDTO.getFechaCalificacion());
-
-        CalificacionEntities actualizada = repo.save(entidad);
-        return convertirACalificacionDTO(actualizada);
+    // actualizar
+    @Transactional
+    public Optional<CalificacionDTO> actualizar(Long id, CalificacionDTO dto) {
+        Optional<CalificacionEntities> opt = calificacionRepo.findById(id);
+        if (opt.isEmpty()) return Optional.empty();
+        CalificacionEntities e = opt.get();
+        applyDtoToEntity(dto, e, true);
+        return Optional.of(toDTO(calificacionRepo.save(e)));
     }
 
-    public boolean eliminarCalificacion(Long id) {
-        try {
-            // Se valida la existencia de la calificación antes de eliminarla
-            CalificacionEntities calificacion = repo.findById(id).orElse(null);
+    // eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        if (!calificacionRepo.existsById(id)) return false;
+        calificacionRepo.deleteById(id);
+        return true;
+    }
 
-            if (calificacion != null) {
-                repo.deleteById(id);
-                return true;
+    // mapper entity -> dto
+    private CalificacionDTO toDTO(CalificacionEntities e) {
+        CalificacionDTO d = new CalificacionDTO();
+        d.setIdCalificacion(e.getIdCalificacion());
+        d.setIdReserva(e.getReserva() != null ? e.getReserva().getId() : null);
+        d.setCalificacion(e.getCalificacion());
+        d.setFechaCalificacion(e.getFechaCalificacion());
+        return d;
+    }
+
+    // aplicar dto -> entity
+    private void applyDtoToEntity(CalificacionDTO d, CalificacionEntities e, boolean isUpdate) {
+        if (d.getIdReserva() != null || !isUpdate) {
+            if (d.getIdReserva() != null) {
+                ReservaEntities r = reservaRepo.findById(d.getIdReserva())
+                        .orElseThrow(() -> new EntityNotFoundException("No existe Reserva con ID: " + d.getIdReserva()));
+                e.setReserva(r);
             } else {
-                System.out.println("Calificación no encontrada.");
-                return false;
+                e.setReserva(null);
             }
-
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException("No se encontró calificación con ID: " + id + " para eliminar.", 1);
         }
+        e.setCalificacion(d.getCalificacion());
+        e.setFechaCalificacion(d.getFechaCalificacion());
     }
-
 }

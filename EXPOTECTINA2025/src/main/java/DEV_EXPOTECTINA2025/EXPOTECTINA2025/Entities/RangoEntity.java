@@ -10,24 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "RANGOEMPLEADO")
+@Table(
+        name = "RANGOEMPLEADO",
+        uniqueConstraints = @UniqueConstraint(name = "uq_rango_nombre", columnNames = "NOMBRERANGO")
+)
 @Getter
 @Setter
-@ToString(exclude = "empleados") // Excluimos la lista para evitar recursión infinita
-@EqualsAndHashCode(exclude = "empleados") // Igual para equals y hashCode
+@ToString
+@EqualsAndHashCode
 public class RangoEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_rango_empleado")
-    @SequenceGenerator(name = "seq_rango_empleado", sequenceName = "SEQ_RANGOEMPLEADO", allocationSize = 1)
+    @SequenceGenerator(name = "seq_rango_empleado", sequenceName = "seq_RangoEmpleado", allocationSize = 1)
     @Column(name = "IDRANGO")
-    private Long id;
+    private Long idRango;
 
-    @Column(name = "NOMBRERANGO")
+    @Column(name = "NOMBRERANGO", nullable = false, length = 50, unique = true)
     private String nombreRango;
 
-    @Column(name = "DESCRIPCION")
+    @Column(name = "DESCRIPCION", length = 200)
     private String descripcion;
-
-    @OneToMany(mappedBy = "rango", cascade = CascadeType.ALL)
-    private List<EmpleadoEntities> empleados = new ArrayList<>();
 }

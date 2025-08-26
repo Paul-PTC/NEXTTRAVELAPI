@@ -8,18 +8,14 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class PuntosClienteDTO {
 
     private Long idPuntos;
 
     @NotBlank(message = "El DUI del cliente es obligatorio")
     @Size(max = 10, message = "El DUI no puede superar los 10 caracteres")
-    private String duiCliente;    // FK a Cliente
+    private String duiCliente;
 
     @NotNull(message = "Los puntos acumulados son obligatorios")
     @Min(value = 0, message = "Los puntos acumulados no pueden ser negativos")

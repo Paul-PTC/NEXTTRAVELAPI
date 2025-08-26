@@ -7,10 +7,13 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.DTOPromocion;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Services.Promocion.PromocionServices;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -18,91 +21,90 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/Promocion")
+@RequestMapping("/apipromocion")
+@RequiredArgsConstructor
 public class PromocionController {
-    @Autowired
-    private PromocionServices servicesPromo;
 
+    private final PromocionServices promoService;
 
-    @GetMapping("/ObtenerPromociones")
-    public List<DTOPromocion> ObtenerPromocion(){return servicesPromo.getAllPromocion();}
+    // listar
+    @GetMapping("/promociones")
+    public ResponseEntity<List<DTOPromocion>> listar() {
+        return ResponseEntity.ok(promoService.listar());
+    }
 
-
-    @PostMapping("/InsertarPromocion")
-    public ResponseEntity<Map<String, Object>> RegistrarPromocion(@Valid @RequestBody DTOPromocion promo, HttpServletRequest request){
-        try{
-            //Guardar ItinerarioEmpleados
-            DTOPromocion res = servicesPromo.InsertarPromocion(promo);
-            if (res == null){
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "Insercion Incorrecta",
-                        "errrorType", "VALIDATION_ERROR",
-                        "message","Datos de Itinerario invalidos"
-                ));
-            }return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "status","sucess",
-                    "data",res
-            ));
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "status", "error",
-                            "message", "Error al registrar usuario",
-                            "detail", e.getMessage()
-                    ));
+    // obtener por id
+    @GetMapping("/promociones/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        try {
+            var opt = promoService.obtenerPorId(id);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Promoción no encontrada"));
+        } catch (Exception e) {
+            log.error("Error al obtener promoción {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error interno", "detalle", e.getMessage()));
         }
     }
 
-    @PutMapping("/ActualizarPromocion/{idpromo}")
-    public ResponseEntity<?> ActualizarPromocion(
-            @PathVariable Long idpromo,
-            @Valid @RequestBody DTOPromocion promocion,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, Long> errores = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(errors ->
-                    errores.put(errors.getField(), Long.valueOf(errors.getDefaultMessage())));
+    // crear
+    @PostMapping("/insertar")
+    public ResponseEntity<?> crear(@Valid @RequestBody DTOPromocion dto, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
             return ResponseEntity.badRequest().body(errores);
         }
         try {
-            DTOPromocion Actualizar = servicesPromo.ActualizarPromocion(idpromo, promocion);
-            return ResponseEntity.ok(Actualizar);
-        } catch (ExceptionsItinerarioEmpleadoNoEncontrado e) {
-            return ResponseEntity.notFound().build();
-        } catch (ExcepcionDatosDuplicados e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    Map.of("error", "Datos duplicados", "campo", e.getCampoDuplicado())
-            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(promoService.crear(dto));
+        } catch (Exception e) {
+            log.error("Error al crear promoción: {}", e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al crear promoción", "detalle", e.getMessage()));
         }
     }
 
-    @DeleteMapping("/EliminarPromocion/{id}")
-    public ResponseEntity<Map<String,Object>>EliminarPromocion(@PathVariable Long id){
+    // actualizar
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @Valid @RequestBody DTOPromocion dto,
+                                        BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
+            for (FieldError err : result.getFieldErrors())
+                errores.put(err.getField(), err.getDefaultMessage());
+            return ResponseEntity.badRequest().body(errores);
+        }
         try {
-            if (!servicesPromo.eliminarPromocion(id)){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .header("X-Mensaje de error", "Itinerario no encontrado")
-                        .body(Map.of(
-                                "error", "Not found",  // Tipo de error
-                                "mensaje", "El Itinerario no ha sido encontrado",  // Mensaje descriptivo
-                                "timestamp", Instant.now().toString()  // Marca de tiempo del error
-                        ));
-            }
-            return ResponseEntity.ok().body(Map.of(
-                    "status", "Proceso completado",  // Estado de la operación
-                    "message", "Itinerario eliminado exitosamente"  // Mensaje de éxito
-            ));
-        }
-        catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "status", "Error",  // Indicador de error
-                    "message", "Error al eliminar itinerario",  // Mensaje general
-                    "detail", e.getMessage()  // Detalles técnicos del error (para debugging)
-            ));
+            var opt = promoService.actualizar(id, dto);
+            if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Promoción no encontrada"));
+        } catch (Exception e) {
+            log.error("Error al actualizar promoción {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al actualizar promoción", "detalle", e.getMessage()));
         }
     }
 
-
+    // eliminar
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            boolean eliminado = promoService.eliminar(id);
+            if (!eliminado) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Promoción no encontrada"));
+            }
+            return ResponseEntity.ok(Map.of("mensaje", "Promoción eliminada correctamente"));
+        } catch (Exception e) {
+            log.error("Error al eliminar promoción {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al eliminar promoción", "detalle", e.getMessage()));
+        }
+    }
 }
