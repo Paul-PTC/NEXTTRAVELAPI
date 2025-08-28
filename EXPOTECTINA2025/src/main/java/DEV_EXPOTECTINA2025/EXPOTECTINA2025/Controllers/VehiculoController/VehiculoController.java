@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.graphql.data.GraphQlQueryByExampleAutoConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,8 +32,23 @@ public class VehiculoController {
 
     // listar
     @GetMapping("/vehiculos")
-    public ResponseEntity<List<VehiculoDTO>> listar() {
-        return ResponseEntity.ok(vehiculoService.listar());
+    public ResponseEntity<Page<VehiculoDTO>> getDataVehiculos(
+            @RequestParam(defaultValue = "0")int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        if (size <= 0  || size > 50){
+            ResponseEntity.badRequest().body(Map.of(
+                    "Status", "EL tamaño de la Pagina debe estar entre 1 y 50 "
+            ));
+            return ResponseEntity.ok(null);
+        }
+        Page<VehiculoDTO> vehiculos = vehiculoService.listar(page, size);
+        if (vehiculos == null){
+            ResponseEntity.badRequest().body(Map.of(
+                    "status", "No hay Vehiculos Registrados."
+            ));
+        }
+        return ResponseEntity.ok( vehiculos);
     }
 
     // obtener por id

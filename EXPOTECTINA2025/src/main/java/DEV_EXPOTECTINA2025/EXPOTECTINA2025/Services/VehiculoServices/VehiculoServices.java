@@ -6,6 +6,9 @@ import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Models.DTO.VehiculoDTO;
 import DEV_EXPOTECTINA2025.EXPOTECTINA2025.Repositories.VehiculosRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +24,10 @@ public class VehiculoServices {
     private final VehiculosRepository vehiculoRepo;
 
     // listar
-    public List<VehiculoDTO> listar() {
-        return vehiculoRepo.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public Page<VehiculoDTO> listar(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<VehiculosEntities> pageEntiti =vehiculoRepo.findAll(pageable);
+        return pageEntiti.map(this::toDTO);
     }
 
     // obtener por id
